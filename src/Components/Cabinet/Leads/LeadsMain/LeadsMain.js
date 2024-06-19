@@ -44,16 +44,9 @@ import { Icons } from "../../../../Assets/Icons/icons";
 import LeadCard from "../LeadCard/LeadCard";
 import { BorderColor, Widgets } from "@mui/icons-material";
 import NewLeadDialog from "../NewLeadDialog/NewLeadDialog";
-import {
-  leadSources,
-  leadStatuses,
-  leadStatusesEnumToText,
-  leadStatusesTextToEnum,
-} from "../../../../Constants/testData";
+import { leadSources, leadStatuses } from "../../../../Constants/testData";
 import useDebounce from "../../../../hooks/useDebounce";
 import useCounter from "../../../../hooks/useCounter";
-import { useSelector } from "react-redux";
-import { selectAllCourseNames } from "../../../../Slices/coursesSlice";
 
 const headerItemStyles = ({ theme }) => ({
   borderRadius: "10px",
@@ -126,7 +119,6 @@ const StatusTitle = ({ status, leadsAmount }) => {
 const courses = ["Frontend", "UI/UX", "Backend", "Flutter", "IT English"];
 
 const LeadsMain = ({ leads, handleDeleteLead, handleAddLead }) => {
-  const allCourseNames = useSelector(selectAllCourseNames);
   const navigate = useNavigate();
 
   const [open, setOpen] = useState(false);
@@ -176,36 +168,14 @@ const LeadsMain = ({ leads, handleDeleteLead, handleAddLead }) => {
     setSelectedLeadSources(["0"]);
   };
 
-  const handleLeadSourceFilter = (selectedLeadSources, currentLeads) => {
+  const handleLeadSourceFilter = (selectedLeadSources) => {
     if (selectedLeadSources.length === 1 && selectedLeadSources[0] === "0") {
-      return currentLeads;
+      setFilteredLeads(leads);
     } else {
-      const filtered = currentLeads.filter((lead) =>
+      const filtered = leads.filter((lead) =>
         selectedLeadSources.includes(lead.source)
       );
-      return filtered;
-    }
-  };
-
-  const handleCoursesSelectFilter = (selectedCourseNames, currentLeads) => {
-    if (selectedCourseNames.length > 0) {
-      const filtered = currentLeads.filter((lead) =>
-        selectedCourseNames.includes(lead.course.name)
-      );
-      return filtered;
-    } else {
-      return currentLeads;
-    }
-  };
-
-  const handleLeadStatusFilter = (selectedLeadStatuses, currentLeads) => {
-    if (selectedLeadStatuses.length === 0) {
-      return currentLeads;
-    } else {
-      const filtered = currentLeads.filter((lead) =>
-        selectedLeadStatuses.includes(lead.statusEnum)
-      );
-      return filtered;
+      setFilteredLeads(filtered);
     }
   };
 
@@ -231,23 +201,10 @@ const LeadsMain = ({ leads, handleDeleteLead, handleAddLead }) => {
 
   useDebounce(
     () => {
-      let filtered = leads;
-      if (
-        selectedLeadSources.length !== 0 &&
-        !(selectedLeadSources.length === 1 && selectedLeadSources[0] === "0")
-      ) {
-        filtered = handleLeadSourceFilter(selectedLeadSources, filtered);
-      }
-      if (selectedCourses.length > 0) {
-        filtered = handleCoursesSelectFilter(selectedCourses, filtered);
-      }
-      if (selectedStatuses.length > 0) {
-        filtered = handleLeadStatusFilter(selectedStatuses, filtered);
-      }
-      setFilteredLeads(filtered);
+      handleLeadSourceFilter(selectedLeadSources);
     },
     1000,
-    [selectedLeadSources, selectedCourses, selectedStatuses, leads]
+    [selectedLeadSources]
   );
 
   useEffect(() => setFilteredLeads(leads), [leads]);
@@ -297,13 +254,12 @@ const LeadsMain = ({ leads, handleDeleteLead, handleAddLead }) => {
                   onChange={handleChangeMultipleSelect(setSelectedStatuses)}
                   renderValue={(selected) => {
                     if (selected.length > 1) {
-                      // if (selected.length === leadSources.length) {
-                      //   return "";
-                      // }
+                      if (selected.length === leadSources.length) {
+                        return "";
+                      }
                       return "..."; // Render "..." if multiple courses are selected
                     }
-
-                    return leadStatusesEnumToText[selected];
+                    return selected;
                   }}
                   IconComponent={
                     Boolean(anchorStatus) ? Icons.ArrowUBold : Icons.ArrowDBold
@@ -320,13 +276,9 @@ const LeadsMain = ({ leads, handleDeleteLead, handleAddLead }) => {
                   }}
                 >
                   {leadStatuses.map((status, i) => (
-                    <MenuItem value={leadStatusesTextToEnum[status]} key={i}>
+                    <MenuItem value={status} key={i}>
                       <CustomCheckbox
-                        checked={
-                          selectedStatuses.indexOf(
-                            leadStatusesTextToEnum[status]
-                          ) > -1
-                        }
+                        checked={selectedStatuses.indexOf(status) > -1}
                       />
                       <ListItemText primary={status} />
                     </MenuItem>
@@ -349,7 +301,7 @@ const LeadsMain = ({ leads, handleDeleteLead, handleAddLead }) => {
                   <Icons.NotebookBookmark color="#b4b7c3" />
                   <span style={{ margin: "0 -8px 0 8px", color: "#1C274C" }}>
                     {(selectedCourses.length < 1 ||
-                      selectedCourses.length === allCourseNames.length) &&
+                      selectedCourses.length === courses.length) &&
                       "Все курсы"}
                   </span>
                 </label>
@@ -361,7 +313,7 @@ const LeadsMain = ({ leads, handleDeleteLead, handleAddLead }) => {
                   onChange={handleChangeMultipleSelect(setSelectedCourses)}
                   renderValue={(selected) => {
                     if (selected.length > 1) {
-                      if (selected.length === allCourseNames.length) {
+                      if (selected.length === courses.length) {
                         return "";
                       }
                       return "..."; // Render "..." if multiple courses are selected
@@ -382,12 +334,13 @@ const LeadsMain = ({ leads, handleDeleteLead, handleAddLead }) => {
                     "& > svg": { transform: "none !important" },
                   }}
                 >
-                  {allCourseNames.map((course, i) => (
+                  {courses.map((course, i) => (
                     <MenuItem value={course} key={i}>
                       <CustomCheckbox
                         checked={selectedCourses.indexOf(course) > -1}
                       />
                       <ListItemText primary={course} />
+                      {/* {course} */}
                     </MenuItem>
                   ))}
                 </SelectStyled>

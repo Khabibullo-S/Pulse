@@ -62,10 +62,6 @@ const Students = () => {
         element={<NewStudent fetchStudents={fetchStudents} />}
       />
       <Route
-        path={routes.EDIT}
-        element={<NewStudent fetchStudents={fetchStudents} />}
-      />
-      <Route
         path="*"
         element={<Navigate to={routes.CABINET + routes.STUDENTS} replace />}
       />

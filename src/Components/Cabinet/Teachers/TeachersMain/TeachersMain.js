@@ -10,8 +10,8 @@ import {
   MenuItem,
   Paper,
   Select,
-  Typography,
   styled,
+  Typography,
 } from "@mui/material";
 import {
   theme,
@@ -34,13 +34,7 @@ import { Icons } from "../../../../Assets/Icons/icons";
 import { useCourses } from "../../../../contexts/Courses.context";
 import useInput from "../../../../hooks/useInput";
 import useDebounce from "../../../../hooks/useDebounce";
-import { useDispatch, useSelector } from "react-redux";
-import { selectAllCourseNames } from "../../../../Slices/coursesSlice";
-import {
-  deleteTeacher,
-  selectAllTeachers,
-} from "../../../../Slices/teachersSlice";
-import TeachersList from "../TeachersList/TeachersList";
+import TeachersList from "../TeachersList/TeachersList"
 
 const headerItemStyles = ({ theme }) => ({
   borderRadius: "10px",
@@ -110,9 +104,7 @@ NumericFormatCustom.propTypes = {
   onChange: PropTypes.func.isRequired,
 };
 
-const TeachersMain = () => {
-  const dispatch = useDispatch();
-  const teachers = useSelector(selectAllTeachers);
+const TeachersMain = ({ teachers, handleDeleteTeacher }) => {
   const navigate = useNavigate();
   const { allCourseNames } = useCourses();
 
@@ -124,18 +116,10 @@ const TeachersMain = () => {
 
   const [selectedCourses, setSelectedCourses] = useState(["0"]);
 
-  const [isGrid, setIsGrid] = useState(true);
-
   const [selectedTeacherIds, setSelectedTeacherIds] = useState([]);
 
   const [anchorThreeDots, setAnchorThreeDots] = useState(null);
   const threeDotsMenuOpen = Boolean(anchorThreeDots);
-
-  const handleClearFilters = () => {
-    resetTeacherSearch();
-    setSelectedTeacherStatuses(["0"]);
-    setSelectedCourses(["0"]);
-  };
 
   const handleSelectTeacher = (id) => {
     setSelectedTeacherIds((prevSelected) =>
@@ -144,6 +128,7 @@ const TeachersMain = () => {
         : [...prevSelected, id]
     );
   };
+
 
   const handleSelectAllTeachers = (selectAll) => {
     if (selectAll) {
@@ -155,15 +140,20 @@ const TeachersMain = () => {
 
   const handleDeleteSelectedTeachers = (allTeachersIDs) => {
     if (allTeachersIDs.length > 0) {
-      selectedTeacherIds.map((teacherID) => dispatch(deleteTeacher(teacherID)));
-    } else {
-      console.log("Выберите учеников для удаления");
+      selectedTeacherIds.map((teacherID) => (handleDeleteTeacher(teacherID)))
     }
-  };
+    else {
+      console.log("Выберите учеников для удаления")
+    }
+  }
 
-  const areAllTeachersSelected =
-    filteredTeachers.length > 0 &&
-    selectedTeacherIds.length === filteredTeachers.length;
+  const areAllTeachersSelected = filteredTeachers.length > 0 && selectedTeacherIds.length === filteredTeachers.length;
+
+  const handleClearFilters = () => {
+    resetTeacherSearch();
+    setSelectedTeacherStatuses(["0"]);
+    setSelectedCourses(["0"]);
+  };
 
   const handleChangeMultipleSelect = (setter) => (event) => {
     const {
@@ -189,6 +179,7 @@ const TeachersMain = () => {
     });
     setFilteredTeacheres(filtered);
   };
+  const [isGrid, setIsGrid] = useState(false);
 
   const goBack = () => {
     navigate(-1); // This navigates one step back in history
@@ -311,80 +302,76 @@ const TeachersMain = () => {
 
           <div className="flex items-center gap-sm">
             {selectedTeacherIds.length <= 0 ? (
-              <>
-                <ButtonStyled
-                  onClick={() => setIsGrid(!isGrid)}
-                  variant="contained"
-                  sx={{
-                    color: "white",
-                    backgroundColor: "white",
-                    "&:hover": {
-                      backgroundColor: "white",
-                    },
-                  }}
-                >
-                  <div className="flex items-center gap-x3s">
-                    {isGrid ? <Icons.ListIcon /> : <Icons.List />}
-                  </div>
-                </ButtonStyled>
-                <Link to={`${routes.CABINET}${routes.TEACHERS}${routes.NEW}`}>
-                  <ButtonStyled variant="contained" color="purpleBlue">
+                <>
+                  <ButtonStyled
+                    onClick={() => setIsGrid(!isGrid)}
+                    variant="contained"
+                    sx={{
+                      color: 'white',
+                      backgroundColor: 'white',
+                      '&:hover': {
+                        backgroundColor: 'white',
+                      },
+                    }}
+                  >
                     <div className="flex items-center gap-x3s">
-                      <Icons.UserAdd />
-                      <span>Добавить учителя</span>
+                      {isGrid ? <Icons.ListIcon /> : <Icons.List />}
                     </div>
                   </ButtonStyled>
-                </Link>
-              </>
-            ) : (
-              <Box className="flex flex-row items-center" gap="25px">
-                <Box className="flex flex-row" gap="5px">
-                  <Icons.ListSelected />
-                  <TypographyStyled sx={{ color: "#6574D8", fontSize: "14px" }}>
-                    Выбрано {selectedTeacherIds.length}
-                  </TypographyStyled>
+                  <Link to={`${routes.CABINET}${routes.TEACHERS}${routes.NEW}`}>
+                    <ButtonStyled variant="contained" color="purpleBlue">
+                      <div className="flex items-center gap-x3s">
+                        <Icons.UserAdd />
+                        <span>Добавить учителя</span>
+                      </div>
+                    </ButtonStyled>
+                  </Link>
+                </>
+              ) : (
+                <Box className="flex flex-row items-center" gap="25px">
+                  <Box className="flex flex-row" gap="5px">
+                    <Icons.ListSelected />
+                    <TypographyStyled sx={{ color: "#6574D8", fontSize: "14px"}}>
+                      Выбрано {selectedTeacherIds.length}
+                    </TypographyStyled>
+                  </Box>
+                  <Box className="flex flex-row items-center" gap="5px" >
+                    <ButtonStyled
+                      variant="contained"
+                      onClick={() => setSelectedTeacherIds([])}
+                      sx={{
+                        color: '#6574D8',
+                        border: '1px solid #6574D8',
+                        backgroundColor: 'white',
+                        width:"100px",
+                        paddingX:"20px",
+                        paddingY:"10px",
+                        fontSize:"14px",
+                        '&:hover': {
+                          backgroundColor: 'white',
+                        },
+                      }}>
+                      Отменить
+                    </ButtonStyled>
+                    <ButtonStyled
+                      variant="contained"
+                      sx={{
+                        color: 'white',
+                        backgroundColor: '#6574D8',
+                        width:"100px",
+                        paddingX:"20px",
+                        paddingY:"10px",
+                        fontSize:"14px",
+                        '&:hover': {
+                          backgroundColor: '#6574D8',
+                        },
+                      }}
+                      onClick={() => handleDeleteSelectedTeachers(selectedTeacherIds)}>
+                      Удалить
+                    </ButtonStyled>
+                  </Box>
                 </Box>
-                <Box className="flex flex-row items-center" gap="5px">
-                  <ButtonStyled
-                    variant="contained"
-                    onClick={() => setSelectedTeacherIds([])}
-                    sx={{
-                      color: "#6574D8",
-                      border: "1px solid #6574D8",
-                      backgroundColor: "white",
-                      width: "100px",
-                      paddingX: "20px",
-                      paddingY: "10px",
-                      fontSize: "14px",
-                      "&:hover": {
-                        backgroundColor: "white",
-                      },
-                    }}
-                  >
-                    Отменить
-                  </ButtonStyled>
-                  <ButtonStyled
-                    variant="contained"
-                    sx={{
-                      color: "white",
-                      backgroundColor: "#6574D8",
-                      width: "100px",
-                      paddingX: "20px",
-                      paddingY: "10px",
-                      fontSize: "14px",
-                      "&:hover": {
-                        backgroundColor: "#6574D8",
-                      },
-                    }}
-                    onClick={() =>
-                      handleDeleteSelectedTeachers(selectedTeacherIds)
-                    }
-                  >
-                    Удалить
-                  </ButtonStyled>
-                </Box>
-              </Box>
-            )}
+              )}
           </div>
         </div>
         <div
@@ -394,63 +381,33 @@ const TeachersMain = () => {
             overflowY: "auto",
           }}
         >
-          {isGrid ? (
-            <Grid
-              container
-              justifyContent="start"
-              // spacing={`${12}px`}
-              columnSpacing={"32px"}
-              rowSpacing={"18px"}
-              marginBottom={`${theme.custom.spacing.sm}px`}
-            >
-              {filteredTeachers.map((teacher, i) => (
-                <Grid item xs="auto" md="auto" lg={3} key={i}>
-                  <TeacherCard {...teacher} />
-                </Grid>
-              ))}
-            </Grid>
-          ) : (
-            <Box
-              className="flex flex-col"
-              backgroundColor="white"
-              border="1px solid #E5E7EB"
-              borderRadius="20px"
-              paddingX="30px"
-            >
-              <Box
-                className="flex flew-row justify-between"
-                sx={{
-                  paddingY: "15px",
-                  paddingRight: "34px",
-                  paddingLeft: "51px",
-                  background: "#F9F9F9",
-                  borderRadius: "29px",
-                  marginRight: "60px",
-                  marginLeft: "20px",
-                  marginTop: "40px",
-                  fontFamily: "Poppins",
-                  fontStyle: "normal",
-                  fontWeight: "600",
-                  fontSize: "12px",
-                  textAlign: "center",
-                  color: "#7D8594",
-                }}
-              >
-                <Box
-                  className="flex flex-row justify-between items-center"
-                  position="relative"
-                >
-                  <CustomCheckbox
-                    checked={areAllTeachersSelected}
-                    onChange={(e) => handleSelectAllTeachers(e.target.checked)}
-                  />
-                  <Typography>ФИО</Typography>
+         {!isGrid ? <Grid
+            container
+            justifyContent="start"
+            // spacing={`${12}px`}
+            columnSpacing={"32px"}
+            rowSpacing={"18px"}
+            marginBottom={`${theme.custom.spacing.sm}px`}
+          >
+            {filteredTeachers.map((teacher, i) => (
+              <Grid item xs="auto" md="auto" lg={3} key={i}>
+                <TeacherCard
+                  {...teacher}
+                  handleDeleteTeacher={handleDeleteTeacher}
+                />
+              </Grid>
+            ))}
+          </Grid>
+        : <Box className="flex flex-col" backgroundColor="white"  border="1px solid #E5E7EB" borderRadius="20px" paddingX="30px" >
+              <Box className="flex flew-row justify-between" sx={{ paddingY:"15px", paddingRight:"34px", paddingLeft:"51px", background:"#F9F9F9", borderRadius:"29px",
+                          marginRight:"60px", marginLeft:"20px", marginTop:"40px", fontFamily: "Poppins", fontStyle: "normal",fontWeight: "600", fontSize: "12px", textAlign:  "center", color: "#7D8594" }}>
+                <Box className="flex flex-row justify-between items-center" position="relative"  >
+                  <CustomCheckbox checked={areAllTeachersSelected} onChange={(e) => handleSelectAllTeachers(e.target.checked)}/>
+                  <Typography>
+                    ФИО
+                  </Typography>
                 </Box>
-                <Box
-                  className="flex flex-row items-center"
-                  width="100%"
-                  position="relative"
-                >
+                <Box className="flex flex-row items-center" width="100%" position="relative">
                   <Typography position="absolute" right="810px">
                     Направление
                   </Typography>
@@ -471,28 +428,21 @@ const TeachersMain = () => {
                   </Typography>
                 </Box>
               </Box>
-              <Box
-                sx={{
-                  position: "relative",
-                  overflowX: "hidden",
-                  overflowY: "scroll",
-                  marginBottom: "15px",
-                  maxHeight: "65vh",
-                }}
-              >
-                {filteredTeachers.map((teacher, i) => (
-                  <TeachersList
-                    keyId={i}
-                    {...teacher}
-                    selectedTeacherIds={selectedTeacherIds}
-                    handleSelectTeacher={handleSelectTeacher}
-                    handleSelectAllTeachers={handleSelectAllTeachers}
-                    areAllTeachersSelected={areAllTeachersSelected}
+              <Box sx={{ position:"relative", overflowX:"hidden", overflowY:"scroll", marginBottom:"15px", maxHeight:"65vh" }}>
+              {filteredTeachers.map((teacher, i)  => (
+                <TeachersList
+                  keyId={i}  
+                  {...teacher}
+                  handleDeleteTeacher={handleDeleteTeacher}
+                  selectedTeacherIds={selectedTeacherIds} 
+                  handleSelectTeacher={handleSelectTeacher} 
+                  handleSelectAllTeachers={handleSelectAllTeachers}
+                  areAllTeachersSelected={areAllTeachersSelected} 
                   />
-                ))}
+              ))}
               </Box>
-            </Box>
-          )}
+            </Box> 
+            }
         </div>
       </Main>
     </Root>

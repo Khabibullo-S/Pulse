@@ -22,22 +22,20 @@ import { auto } from "@popperjs/core";
 import { borderRadius } from "@mui/system";
 import { NumericFormat } from "react-number-format";
 import { getRussianWord } from "../../../../helpers/helpers";
-import { useDispatch } from "react-redux";
-import { deleteCourse } from "../../../../Slices/coursesSlice";
 
-const CourseCard = ({ id, name, duration, price, thumbnail }) => {
-  const dispatch = useDispatch();
+const CourseCard = ({
+  id,
+  name,
+  duration,
+  price,
+  thumbnail,
+  handleDeleteCourse,
+}) => {
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
-
-  const handleDeleteCourse = () => {
-    dispatch(deleteCourse(id));
-  };
-
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
   };
-
   const handleClose = () => {
     setAnchorEl(null);
   };
@@ -89,7 +87,10 @@ const CourseCard = ({ id, name, duration, price, thumbnail }) => {
                 {/* </Link> */}
               </MenuItem>
               <MenuItem onClick={handleClose} disableRipple>
-                <ButtonStyled color="crimson" onClick={handleDeleteCourse}>
+                <ButtonStyled
+                  color="crimson"
+                  onClick={() => handleDeleteCourse(id)}
+                >
                   <Icons.TrashCan />
                   <span>Удалить курс</span>
                 </ButtonStyled>
@@ -131,8 +132,7 @@ const CourseCard = ({ id, name, duration, price, thumbnail }) => {
               </TypographyStyled>
             </div>
           </Box>
-          <Box></Box>
-          {/* <Link className="link full-width">
+          <Link className="link full-width">
             <ButtonStyled
               fullWidth
               variant="contained"
@@ -144,7 +144,7 @@ const CourseCard = ({ id, name, duration, price, thumbnail }) => {
                 <Typography>Открыть</Typography>
               </div>
             </ButtonStyled>
-          </Link> */}
+          </Link>
         </Box>
       </CardStyled>
     </>

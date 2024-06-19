@@ -15,15 +15,15 @@ const Home = () => {
           <h1>Выберите свою платформу</h1>
         </div>
         <div className={styles["cards"]}>
-          <Link to={routes.SIGN_IN}>
-            <img src={kindergarten} alt="kindergarden" />
-          </Link>
-          <Link to={routes.SIGN_IN}>
-            <img src={learningCenter} alt="learningCenter" />
-          </Link>
-          <Link to={routes.SIGN_IN}>
-            <img src={school} alt="school" />
-          </Link>
+        <Link to={routes.SIGN_IN}>
+          <img src={kindergarten} alt="kindergarden" />
+        </Link>
+        <Link to={routes.SIGN_IN}>
+          <img src={learningCenter} alt="learningCenter"/>
+        </Link>
+        <Link to={routes.SIGN_IN}>
+          <img src={school} alt="school"/>
+        </Link>
         </div>
       </div>
     </div>

@@ -24,11 +24,7 @@ import { NumericFormat } from "react-number-format";
 import * as routes from "../../../../Constants/routes";
 import { Link, useNavigate } from "react-router-dom";
 import { formattedPhoneNumber } from "../../../../helpers/helpers";
-import {
-  leadStatuses,
-  leadStatusesEnum,
-  leadStatusesEnumToText,
-} from "../../../../Constants/testData";
+import { leadStatuses } from "../../../../Constants/testData";
 
 const StatusChip = styled((props) => <Chip {...props} />)(
   ({ theme, status }) => ({
@@ -36,20 +32,20 @@ const StatusChip = styled((props) => <Chip {...props} />)(
     padding: "8px 10px",
     borderRadius: "8px",
     backgroundColor:
-      status === leadStatusesEnum[0]
+      status === leadStatuses[0]
         ? theme.palette.orange.light
-        : status === leadStatusesEnum[1]
+        : status === leadStatuses[1]
         ? theme.palette.blue.light
-        : status === leadStatusesEnum[2]
+        : status === leadStatuses[2]
         ? theme.palette.golden.light
         : theme.palette.seaBlue.light,
     "& .MuiChip-label": {
       color:
-        status === leadStatusesEnum[0]
+        status === leadStatuses[0]
           ? theme.palette.orange.main
-          : status === leadStatusesEnum[1]
+          : status === leadStatuses[1]
           ? theme.palette.blue.main
-          : status === leadStatusesEnum[2]
+          : status === leadStatuses[2]
           ? theme.palette.golden.main
           : theme.palette.seaBlue.main,
       padding: "0",
@@ -60,11 +56,11 @@ const StatusChip = styled((props) => <Chip {...props} />)(
       margin: "0",
       marginRight: "8px",
       color:
-        status === leadStatusesEnum[0]
+        status === leadStatuses[0]
           ? theme.palette.orange.main
-          : status === leadStatusesEnum[1]
+          : status === leadStatuses[1]
           ? theme.palette.blue.main
-          : status === leadStatusesEnum[2]
+          : status === leadStatuses[2]
           ? theme.palette.golden.main
           : theme.palette.seaBlue.main,
     },
@@ -79,7 +75,7 @@ const LeadCard = ({
   secondPhoneNumber,
   email,
   source,
-  course,
+  selectedCourseNames,
   langEnum,
   comment,
   statusEnum,
@@ -234,7 +230,7 @@ const LeadCard = ({
                 overflow="hidden"
                 textOverflow="ellipsis"
               >
-                {course.name}
+                {/* {selectedCourseNames.join(", ")} */}
               </TypographyStyled>
             </div>
             <div className="flex justify-between">
@@ -259,7 +255,7 @@ const LeadCard = ({
             <TypographyStyled>Статус</TypographyStyled>
           </InfoWithIcon>
           <StatusChip
-            label={leadStatusesEnumToText[statusEnum]}
+            label={statusEnum}
             status={statusEnum}
             icon={<Icons.Circle />}
           />

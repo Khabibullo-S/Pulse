@@ -160,9 +160,7 @@ const GroupCard = ({
               </InfoWithIcon>
               <Link
                 to={
-                  routes.CABINET +
-                  routes.TEACHERS +
-                  routes.getProfilePath(teacher.id)
+                  routes.CABINET + routes.TEACHERS + routes.getProfilePath(id)
                 }
                 className="link flex gap-x3s"
               >

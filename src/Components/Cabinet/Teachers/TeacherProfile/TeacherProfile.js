@@ -763,7 +763,7 @@ const TeacherProfile = ({ handleDeleteTeacher }) => {
                                 displayType="text" // Set to "input" if you want an input field
                                 thousandSeparator=" "
                               />{" "}
-                              сўм
+                              UZS
                             </CardText>
                           </InfoLine>
                         </ButtonStyled>
@@ -771,25 +771,16 @@ const TeacherProfile = ({ handleDeleteTeacher }) => {
                     </div>
                   </div>
                   <div>
-                    <Link
-                      to={
-                        routes.CABINET +
-                        routes.TEACHERS +
-                        routes.getEditPath(teacher.id)
-                      }
-                      className="link"
+                    <DialogButton
+                      variant="contained"
+                      color="purpleBlue"
+                      // onClick={handleClickOpen}
                     >
-                      <DialogButton
-                        variant="contained"
-                        color="purpleBlue"
-                        // onClick={handleClickOpen}
-                      >
-                        <div className="flex items-center gap-x3s">
-                          <Icons.PenNewSquare />
-                          <span>Изменить</span>
-                        </div>
-                      </DialogButton>
-                    </Link>
+                      <div className="flex items-center gap-x3s">
+                        <Icons.PenNewSquare />
+                        <span>Изменить</span>
+                      </div>
+                    </DialogButton>
                   </div>
                 </div>
               </Card>
