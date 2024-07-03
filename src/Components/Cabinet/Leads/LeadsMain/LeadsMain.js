@@ -163,47 +163,50 @@ const LeadsMain = ({
   const [groupedLeads, setGroupedLeads] = useLocalStorage("groupedLeads", {});
 
   useEffect(() => {
-    // if groupedLeads in local storage is empty object with no keys
-    if (Object.keys(groupedLeads).length === 0) {
-      // initialize object, it becomes kinda like this: {NEW: [], IN_PROGRESS: [], RECYCLED: [], DEAD: []}
-      const initialGroupedLeads = leadStatusesEnum.reduce((acc, status) => {
-        acc[status] = []; // Initialize an empty array for each status
-        return acc;
-      }, {});
-      // filling empty arrays of the corresponding keys with the corresponding leads where lead's statusEnum is equal to key in the object
-      leads?.forEach((lead) => {
-        const { statusEnum } = lead;
-        initialGroupedLeads[statusEnum].push(lead);
-      });
-      setGroupedLeads(initialGroupedLeads); // Update the state
-    } else {
-      const updatedGroupedLeads = { ...groupedLeads };
-      // Map existing leads to their corresponding keys in the object
-      Object.entries(updatedGroupedLeads).forEach(([entry, leadsInEntry]) => {
-        updatedGroupedLeads[entry] = leadsInEntry
-          .filter((lead) => Boolean(lead))
-          .map((leadInEntry) =>
-            leads.find(
-              (lead) => lead.id === leadInEntry.id && lead.statusEnum === entry
-            )
-          )
-          .filter((lead) => Boolean(lead));
-
-        // Filter new leads based on the statusEnum
-        const newLeads = leads.filter((lead) => {
-          return (
-            lead.statusEnum === entry &&
-            !leadsInEntry.some((leadInEntry) => leadInEntry.id === lead.id)
-          );
+    if (leads.length > 0) {
+      if (Object.keys(groupedLeads).length === 0) {
+        // if groupedLeads in local storage is empty object with no keys
+        // initialize object, it becomes kinda like this: {NEW: [], IN_PROGRESS: [], RECYCLED: [], DEAD: []}
+        const initialGroupedLeads = leadStatusesEnum.reduce((acc, status) => {
+          acc[status] = []; // Initialize an empty array for each status
+          return acc;
+        }, {});
+        // filling empty arrays of the corresponding keys with the corresponding leads where lead's statusEnum is equal to key in the object
+        leads?.forEach((lead) => {
+          const { statusEnum } = lead;
+          initialGroupedLeads[statusEnum].push(lead);
         });
+        setGroupedLeads(initialGroupedLeads); // Update the state
+      } else {
+        const updatedGroupedLeads = { ...groupedLeads };
+        // Map existing leads to their corresponding keys in the object
+        Object.entries(updatedGroupedLeads).forEach(([entry, leadsInEntry]) => {
+          updatedGroupedLeads[entry] = leadsInEntry
+            .filter((lead) => Boolean(lead))
+            .map((leadInEntry) =>
+              leads.find(
+                (lead) =>
+                  lead.id === leadInEntry.id && lead.statusEnum === entry
+              )
+            )
+            .filter((lead) => Boolean(lead));
 
-        // Add the new leads to the existing leads
-        updatedGroupedLeads[entry] = [
-          ...updatedGroupedLeads[entry],
-          ...newLeads,
-        ];
-      });
-      setGroupedLeads(updatedGroupedLeads);
+          // Filter new leads based on the statusEnum
+          const newLeads = leads.filter((lead) => {
+            return (
+              lead.statusEnum === entry &&
+              !leadsInEntry.some((leadInEntry) => leadInEntry.id === lead.id)
+            );
+          });
+
+          // Add the new leads to the existing leads
+          updatedGroupedLeads[entry] = [
+            ...updatedGroupedLeads[entry],
+            ...newLeads,
+          ];
+        });
+        setGroupedLeads(updatedGroupedLeads);
+      }
     }
   }, [leads]);
 
@@ -616,7 +619,7 @@ const LeadsMain = ({
             <Grid item xs="auto" md="auto" lg={3} key={i}>
               <StatusTitle
                 status={leadStatusEnum}
-                leadsAmount={filteredLeads[leadStatusEnum]?.length || 0}
+                leadsAmount={groupedLeads[leadStatusEnum]?.length || 0}
               />
             </Grid>
           ))}
@@ -660,7 +663,7 @@ const LeadsMain = ({
                         height="100%"
                       >
                         <Grid container direction="column" spacing={2}>
-                          {filteredLeads[status].map((lead, index) => (
+                          {groupedLeads[status].map((lead, index) => (
                             <Draggable
                               key={lead.id}
                               draggableId={lead.id}

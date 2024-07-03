@@ -221,6 +221,7 @@ const NewGroupDialog = ({ open, handleClose, ...otherProps }) => {
   // Function to handle change in subject selection
   const handleCourseChange = (event, newValue) => {
     changeSelectedCourseName(createEventWithValue(newValue));
+    console.log(selectedCourse);
   };
 
   useEffect(() => {
