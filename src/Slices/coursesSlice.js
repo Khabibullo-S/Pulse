@@ -17,7 +17,7 @@ export const fetchCourses = createAsyncThunk(
 
 export const createCourse = createAsyncThunk(
   "courses/createCourse",
-  async (courseData, { rejectWithValue }) => {
+  async (courseData, { rejectWithValue, dispatch }) => {
     try {
       const formData = new FormData();
       formData.append("courseData", JSON.stringify(courseData));
@@ -28,6 +28,7 @@ export const createCourse = createAsyncThunk(
         },
       });
 
+      dispatch(fetchCourses());
       return response.data; // Return the response data from the server
     } catch (error) {
       return rejectWithValue(error.response.data);
@@ -69,7 +70,6 @@ const coursesSlice = createSlice({
       })
       .addCase(createCourse.fulfilled, (state, action) => {
         state.status = "succeeded";
-        state.courses.push(action.meta.arg); // Add the new course to the state array
       })
       .addCase(createCourse.rejected, (state, action) => {
         state.status = "failed";
