@@ -1,46 +1,24 @@
-import React, { useEffect, useState } from "react";
+import { Box, Grid, Typography } from "@mui/material";
+import PropTypes from "prop-types";
+import React, { useState } from "react";
+import { NumericFormat } from "react-number-format";
+import { useNavigate } from "react-router-dom";
+import { Icons } from "../../../Assets/Icons/icons";
+import { deleteCourse } from "../../../reducers/courses.reducer";
 import {
-  Button,
-  Grid,
-  IconButton,
-  InputBase,
-  MenuItem,
-  Typography,
-  Paper,
-  styled,
-  Box,
-} from "@mui/material";
-import {
-  theme,
   ButtonStyled,
-  ContentHeader,
+  CustomCheckbox,
   Main,
   Root,
+  theme,
   Title,
-  SelectStyled,
-  CustomCheckbox,
   TypographyStyled,
 } from "../CabinetStyles";
-import { NumericFormat } from "react-number-format";
-import PropTypes from "prop-types";
-import { v4 as uuidv4 } from "uuid";
 import CourseCard from "./CourseCard/CourseCard";
 import NewCourseDialog from "./NewCourseDialog/NewCourseDialog";
-import { Icons } from "../../../Assets/Icons/icons";
-import { useNavigate } from "react-router-dom";
-import {
-  useCourses,
-  useCoursesDispatch,
-} from "../../../contexts/Courses.context";
-import { addCourse, deleteCourse } from "../../../reducers/courses.reducer";
 
-import api from "../../../Core/api";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  fetchCourses,
-  selectAllCourses,
-  selectCoursesStatus,
-} from "../../../Slices/coursesSlice";
+import { selectAllCourses } from "../../../Slices/coursesSlice";
 import CoursesList from "./CoursesList/CoursesList";
 
 const headerItemStyles = ({ theme }) => ({

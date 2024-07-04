@@ -1,12 +1,12 @@
+import { Box, MenuItem, Typography } from "@mui/material";
+import { format } from "date-fns";
 import React, { useState } from "react";
+import { useDispatch } from "react-redux";
 import { Icons } from "../../../../Assets/Icons/icons";
 import { weekDaysText } from "../../../../Constants/dateLocales";
-import { format } from "date-fns";
 import { getRussianWord } from "../../../../helpers/helpers";
-import { Box, MenuItem, Typography } from "@mui/material";
-import { ButtonStyled, CustomCheckbox, MenuStyled } from "../../CabinetStyles";
-import { useDispatch } from "react-redux";
 import { deleteGroup } from "../../../../Slices/groupsSlice";
+import { ButtonStyled, CustomCheckbox, MenuStyled } from "../../CabinetStyles";
 
 const GroupsList = ({
   keyId,

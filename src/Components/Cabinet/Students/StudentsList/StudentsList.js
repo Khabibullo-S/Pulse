@@ -1,9 +1,9 @@
-import React, { useState } from "react";
-import { Icons } from "../../../../Assets/Icons/icons";
 import { Box, MenuItem, Typography } from "@mui/material";
-import { ButtonStyled, CustomCheckbox, MenuStyled } from "../../CabinetStyles";
+import React, { useState } from "react";
 import { useDispatch } from "react-redux";
+import { Icons } from "../../../../Assets/Icons/icons";
 import { deleteStudent } from "../../../../Slices/studentsSlice";
+import { ButtonStyled, CustomCheckbox, MenuStyled } from "../../CabinetStyles";
 
 const StudentsList = ({
   keyId,

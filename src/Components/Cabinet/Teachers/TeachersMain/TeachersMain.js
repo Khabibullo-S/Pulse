@@ -1,45 +1,39 @@
-import React, { useEffect, useState } from "react";
-import { Link, useInRouterContext, useNavigate } from "react-router-dom";
-import * as routes from "../../../../Constants/routes";
 import {
   Box,
   Grid,
-  IconButton,
-  InputBase,
   ListItemText,
   MenuItem,
-  Paper,
   Select,
   Typography,
   styled,
 } from "@mui/material";
-import {
-  theme,
-  ButtonStyled,
-  Main,
-  Root,
-  Title,
-  InputBaseStyledV2,
-  selectStylesV2,
-  customMenuProps,
-  CustomCheckbox,
-  TypographyStyled,
-} from "../../CabinetStyles";
-import { NumericFormat } from "react-number-format";
 import PropTypes from "prop-types";
-import { v4 as uuidv4 } from "uuid";
-import TeacherCard from "../TeacherCard/TeacherCard";
-import NewCourseDialog from "../../Courses/NewCourseDialog/NewCourseDialog";
-import { Icons } from "../../../../Assets/Icons/icons";
-import { useCourses } from "../../../../contexts/Courses.context";
-import useInput from "../../../../hooks/useInput";
-import useDebounce from "../../../../hooks/useDebounce";
+import React, { useEffect, useState } from "react";
+import { NumericFormat } from "react-number-format";
 import { useDispatch, useSelector } from "react-redux";
-import { selectAllCourseNames } from "../../../../Slices/coursesSlice";
+import { Link, useNavigate } from "react-router-dom";
+import { Icons } from "../../../../Assets/Icons/icons";
+import * as routes from "../../../../Constants/routes";
+import { useCourses } from "../../../../contexts/Courses.context";
+import useDebounce from "../../../../hooks/useDebounce";
+import useInput from "../../../../hooks/useInput";
 import {
   deleteTeacher,
   selectAllTeachers,
 } from "../../../../Slices/teachersSlice";
+import {
+  ButtonStyled,
+  CustomCheckbox,
+  InputBaseStyledV2,
+  Main,
+  Root,
+  Title,
+  TypographyStyled,
+  customMenuProps,
+  selectStylesV2,
+  theme,
+} from "../../CabinetStyles";
+import TeacherCard from "../TeacherCard/TeacherCard";
 import TeachersList from "../TeachersList/TeachersList";
 
 const headerItemStyles = ({ theme }) => ({
@@ -47,40 +41,6 @@ const headerItemStyles = ({ theme }) => ({
   backgroundColor: "#fff",
   border: "1px solid #E5E7EB",
 });
-
-const HeaderDiv = styled("div")(({ theme }) => ({
-  borderRadius: "10px",
-  backgroundColor: "#fff",
-  border: "1px solid #E5E7EB",
-}));
-
-const teachers = [
-  "Koptleulov Arslan",
-  "Ilya Starodubtsev",
-  "Aziz Mamajonov",
-  "Muhammad Matchonov",
-];
-const techs = [
-  "JavaScript",
-  "Django",
-  "Python",
-  "GitHub",
-  "React",
-  "Node.js",
-  "Ruby on Rails",
-  "Vue.js",
-  "Angular",
-  "Flask",
-  "Express.js",
-  "MongoDB",
-  "PostgreSQL",
-  "AWS",
-  "Heroku",
-  "CSS",
-  "HTML",
-  "TypeScript",
-  "GraphQL",
-];
 
 const NumericFormatCustom = React.forwardRef(function NumericFormatCustom(
   props,

@@ -1,67 +1,49 @@
-import React, { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import * as routes from "../../../../Constants/routes";
 import {
   Box,
-  Button,
-  ButtonBase,
   Collapse,
   Grid,
-  IconButton,
-  InputBase,
-  List,
-  ListItem,
   ListItemText,
-  Menu,
   MenuItem,
-  Paper,
   Select,
-  TextField,
   Typography,
   styled,
 } from "@mui/material";
-import {
-  theme,
-  ButtonStyled,
-  ContentHeader,
-  Main,
-  Root,
-  Title,
-  TextFieldStyled,
-  SelectStyled,
-  customMenuProps,
-  CustomCheckbox,
-  selectStyles,
-  InputBaseStyled,
-  selectStylesV2,
-  InputBaseStyledV2,
-  AutocompleteStyled,
-  AutocompleteField,
-  MenuStyled,
-  AutocompleteMenuProps,
-  AutocompleteStyledV2,
-  AutocompleteFieldV2,
-  TypographyStyled,
-  textFieldStylesV2,
-} from "../../CabinetStyles";
-import { NumericFormat } from "react-number-format";
-import PropTypes from "prop-types";
-import { v4 as uuidv4 } from "uuid";
-import StudentCard from "../StudentCard/StudentCard";
-import StudentsListItem from "../StudentsList/StudentsList";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFnsV3";
-import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { ru } from "date-fns/locale";
-import { russianLocale } from "../../../../Constants/dateLocales";
+import React, { useEffect, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { Icons } from "../../../../Assets/Icons/icons";
+import { russianLocale } from "../../../../Constants/dateLocales";
+import * as routes from "../../../../Constants/routes";
+import { teacherNames } from "../../../../Constants/testData";
 import { useCourses } from "../../../../contexts/Courses.context";
 import useInput from "../../../../hooks/useInput";
-import { teacherNames } from "../../../../Constants/testData";
+import {
+  AutocompleteFieldV2,
+  AutocompleteMenuProps,
+  AutocompleteStyledV2,
+  ButtonStyled,
+  CustomCheckbox,
+  InputBaseStyledV2,
+  Main,
+  MenuStyled,
+  Root,
+  SelectStyled,
+  Title,
+  TypographyStyled,
+  customMenuProps,
+  selectStylesV2,
+  textFieldStylesV2,
+  theme,
+} from "../../CabinetStyles";
+import StudentCard from "../StudentCard/StudentCard";
+import StudentsListItem from "../StudentsList/StudentsList";
 
-import useToggle from "../../../../hooks/useToggle";
-import useDebounce from "../../../../hooks/useDebounce";
 import { useDispatch, useSelector } from "react-redux";
+import useDebounce from "../../../../hooks/useDebounce";
+import useToggle from "../../../../hooks/useToggle";
 import {
   deleteStudent,
   selectAllStudents,
