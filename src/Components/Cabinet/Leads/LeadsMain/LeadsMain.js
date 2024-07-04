@@ -1,50 +1,19 @@
-import React, { useEffect, useMemo, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import * as routes from "../../../../Constants/routes";
 import {
   Box,
-  Button,
-  ButtonBase,
   Card,
-  Checkbox,
   Chip,
   Grid,
-  IconButton,
-  InputBase,
-  List,
-  ListItem,
   ListItemText,
-  Menu,
   MenuItem,
-  Paper,
   Select,
-  TextField,
   Typography,
   styled,
 } from "@mui/material";
-import {
-  theme,
-  ButtonStyled,
-  ContentHeader,
-  Main,
-  Root,
-  Title,
-  TextFieldStyled,
-  SelectStyled,
-  customMenuProps,
-  selectStylesV2,
-  InputBaseStyledV2,
-  TypographyStyled,
-  CustomCheckbox,
-  MenuStyled,
-} from "../../CabinetStyles";
-import { NumericFormat } from "react-number-format";
-import PropTypes from "prop-types";
-import { v4 as uuidv4 } from "uuid";
+import React, { useEffect, useState } from "react";
+import { DragDropContext, Draggable } from "react-beautiful-dnd";
+import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import { Icons } from "../../../../Assets/Icons/icons";
-import LeadCard from "../LeadCard/LeadCard";
-import { BorderColor, Widgets } from "@mui/icons-material";
-import NewLeadDialog from "../NewLeadDialog/NewLeadDialog";
 import {
   leadSources,
   leadStatuses,
@@ -52,15 +21,26 @@ import {
   leadStatusesEnumToText,
   leadStatusesTextToEnum,
 } from "../../../../Constants/testData";
-import useDebounce from "../../../../hooks/useDebounce";
-import useCounter from "../../../../hooks/useCounter";
-import { useSelector } from "react-redux";
 import { selectAllCourseNames } from "../../../../Slices/coursesSlice";
 import { getRussianWord } from "../../../../helpers/helpers";
-import { DragDropContext, Draggable } from "react-beautiful-dnd";
-import { StrictModeDroppable as Droppable } from "../../../helpers/StrictModeDroppable";
-import api from "../../../../Core/api";
+import useCounter from "../../../../hooks/useCounter";
 import { useLocalStorage } from "../../../../hooks/useStorage";
+import { StrictModeDroppable as Droppable } from "../../../helpers/StrictModeDroppable";
+import {
+  ButtonStyled,
+  CustomCheckbox,
+  InputBaseStyledV2,
+  Main,
+  MenuStyled,
+  Root,
+  SelectStyled,
+  Title,
+  customMenuProps,
+  selectStylesV2,
+  theme,
+} from "../../CabinetStyles";
+import LeadCard from "../LeadCard/LeadCard";
+import NewLeadDialog from "../NewLeadDialog/NewLeadDialog";
 
 const headerItemStyles = ({ theme }) => ({
   borderRadius: "10px",
@@ -304,7 +284,8 @@ const LeadsMain = ({
     navigate(-1); // This navigates one step back in history
   };
 
-  useDebounce(
+  //useDebounce(
+  useEffect(
     () => {
       let filtered = { ...groupedLeads };
       if (
@@ -322,11 +303,9 @@ const LeadsMain = ({
       console.log(filtered);
       setFilteredLeads(filtered);
     },
-    1000,
+    // 1000,
     [selectedLeadSources, selectedCourses, selectedStatuses, groupedLeads]
   );
-
-  useEffect(() => setFilteredLeads({ ...groupedLeads }), [groupedLeads]);
 
   const onDragEnd = async (result) => {
     const { destination, source, draggableId } = result;
@@ -341,7 +320,6 @@ const LeadsMain = ({
       return;
     }
 
-    // const column = groupedLeads[source.droppableId];
     const sourceLeads = [...groupedLeads[source.droppableId]];
     const destinationLeads = [...groupedLeads[destination.droppableId]];
 
@@ -374,6 +352,7 @@ const LeadsMain = ({
       };
 
       setGroupedLeads(newGroupedLeads);
+      setFilteredLeads(newGroupedLeads);
 
       const uuid = result.draggableId;
       const status = result.destination.droppableId;
@@ -383,7 +362,7 @@ const LeadsMain = ({
   };
 
   let leadListContent;
-  if (groupedLeads && filteredLeads) {
+  if (leads.length > 0) {
     leadListContent = (
       <>
         <Grid
@@ -397,7 +376,7 @@ const LeadsMain = ({
             <Grid item xs="auto" md="auto" lg={3} key={i}>
               <StatusTitle
                 status={leadStatusEnum}
-                leadsAmount={groupedLeads[leadStatusEnum]?.length || 0}
+                leadsAmount={filteredLeads[leadStatusEnum]?.length || 0}
               />
             </Grid>
           ))}
@@ -409,19 +388,6 @@ const LeadsMain = ({
             overflowY: "auto",
           }}
         >
-          {/* <Grid
-            container
-            justifyContent="start"
-            rowSpacing={"18px"}
-            columnSpacing={"32px"}
-            marginBottom={`${theme.custom.spacing.sm}px`}
-          >
-            {filteredLeads.map((lead, i) => (
-              <Grid item xs="auto" md="auto" lg={3} key={i}>
-                <LeadCard {...lead} handleDeleteLead={handleDeleteLead} />
-              </Grid>
-            ))}
-          </Grid> */}
           <DragDropContext onDragEnd={onDragEnd}>
             <Grid
               container
@@ -441,7 +407,7 @@ const LeadsMain = ({
                         height="100%"
                       >
                         <Grid container direction="column" spacing={2}>
-                          {groupedLeads[status].map((lead, index) => (
+                          {filteredLeads[status].map((lead, index) => (
                             <Draggable
                               key={lead.id}
                               draggableId={lead.id}
@@ -476,7 +442,7 @@ const LeadsMain = ({
       </>
     );
   } else {
-    leadListContent = <div>Loading...</div>;
+    leadListContent = <div></div>;
   }
   return (
     <Root
