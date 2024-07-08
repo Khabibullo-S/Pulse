@@ -40,25 +40,20 @@ const CoursesList = ({
 
   return (
     <Box
-      className="flex flex-row items-center text-center justify-between"
+      className="flex flex-row items-center justify-between"
       sx={{
         height: "75px",
         backgroundColor: `${keyId % 2 !== 0 ? "#F9F9F9" : "white"}`,
         marginLeft: "25px",
         marginRight: "45px",
         fontWeight: "500",
-        fontSize: "10px",
+        fontSize: "13px",
         textAlign: "center",
         color: "#7D8594",
         opacity: "0.7",
       }}
     >
-      <Box
-        className="flex flex-row"
-        marginLeft="45px"
-        position="relative"
-        id={id}
-      >
+      <Box className="flex flex-row" marginLeft="45px" id={id}>
         <CustomCheckbox
           checked={selectedCoursesIds.includes(id)}
           onChange={() => handleSelectCourse(id)}
@@ -66,46 +61,48 @@ const CoursesList = ({
         <Typography>{name}</Typography>
       </Box>
       <Box
-        className="flex flex-row items-center align-center"
-        postition="absolute"
+        className="flex flex-row items-center justify-between"
+        flexGrow="3"
+        maxWidth="70%"
+        paddingLeft="20px"
       >
-        <Typography position="absolute" left="663px">
+        <Typography display="flex" alignItems="flex-start" width="23%">
           22.05.2024
         </Typography>
-        <Typography position="absolute" left="818px">
+        <Typography display="flex" alignItems="flex-start" width="18%">
           UX/UI GR011-62
         </Typography>
-        <Typography position="absolute" left="953px">
+        <Typography display="flex" alignItems="flex-start" width="25%">
           {formatUzbekPhoneNumber("+998900331533")}
         </Typography>
-        <Typography position="absolute" left="1108px">
+        <Typography display="flex" alignItems="flex-start" width="30%">
           example@gmail.com
         </Typography>
-        <Typography position="absolute" left="1300px">
+        <Typography display="flex" alignItems="flex-start" width="21%">
           Arslan Koptleulov
         </Typography>
-        <ButtonStyled
-          className="flex justify-center items-center"
-          variant="contained"
-          sx={{
-            width: "20px",
-            height: "20px",
-            backgroundColor: "white",
-            color: "#6574D8",
-            position: "absolute",
-            left: "1415px",
-            border: "1px solid #6574D8",
-            borderRadius: "5px",
-            "&:hover": {
+        <Box width="7%">
+          <ButtonStyled
+            className="flex justify-center items-center"
+            variant="contained"
+            sx={{
+              width: "20px",
+              height: "20px",
               backgroundColor: "white",
-            },
-          }}
-          onClick={handleOpenThreeDotsMenu}
-        >
-          <Box className="flex items-center">
-            <Icons.ThreeDotsHor />
-          </Box>
-        </ButtonStyled>
+              color: "#6574D8",
+              border: "1px solid #6574D8",
+              borderRadius: "5px",
+              "&:hover": {
+                backgroundColor: "white",
+              },
+            }}
+            onClick={handleOpenThreeDotsMenu}
+          >
+            <Box className="flex items-center">
+              <Icons.ThreeDotsHor />
+            </Box>
+          </ButtonStyled>
+        </Box>
         <MenuStyled
           id="demo-customized-menu"
           MenuListProps={{

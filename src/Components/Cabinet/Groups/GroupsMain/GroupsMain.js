@@ -797,42 +797,63 @@ const GroupsMain = () => {
                   fontFamily: "Poppins",
                   fontStyle: "normal",
                   fontWeight: "600",
-                  fontSize: "11px",
+                  fontSize: "14px",
                   textAlign: "center",
                   color: "#7D8594",
                   width: "auto",
                 }}
               >
-                <Box
-                  className="flex flex-row justify-between items-center"
-                  position="relative"
-                >
+                <Box className="flex flex-row items-center">
                   <CustomCheckbox
                     checked={areAllGroupsSelected}
                     onChange={(e) => handleSelectAllGroups(e.target.checked)}
                   />
                   <Typography>Название Группы</Typography>
                 </Box>
-                <Box className="flex flex-row items-center" position="relative">
-                  <Box width="auto" position="relative" right="495px">
-                    <Typography>Дата начала</Typography>
-                  </Box>
-                  <Typography position="relative" right="435px">
+                <Box
+                  className="flex flex-row justify-between items-center"
+                  flexGrow="4"
+                  maxWidth="75%"
+                >
+                  <Typography display="flex" width="9%" alignItems="flex-start">
+                    Дата начала
+                  </Typography>
+                  <Typography
+                    display="flex"
+                    width="12%"
+                    alignItems="flex-start"
+                  >
                     Дата завершения
                   </Typography>
-                  <Typography position="relative" right="365px">
+                  <Typography display="flex" width="8%" alignItems="flex-start">
                     Дни урока
                   </Typography>
-                  <Typography position="relative" right="305px">
+                  <Typography
+                    display="flex"
+                    width="12%"
+                    alignItems="flex-start"
+                  >
                     Учитель
                   </Typography>
-                  <Typography position="relative" right="225px">
+                  <Typography
+                    display="flex"
+                    width="17%"
+                    alignItems="flex-start"
+                  >
                     Продолжительность
                   </Typography>
-                  <Typography position="relative" right="140px">
+                  <Typography
+                    display="flex"
+                    width="10%"
+                    alignItems="flex-start"
+                  >
                     Кабинет
                   </Typography>
-                  <Typography position="relative" right="55px">
+                  <Typography
+                    display="flex"
+                    width="12%"
+                    alignItems="flex-start"
+                  >
                     Учеников
                   </Typography>
                 </Box>

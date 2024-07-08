@@ -247,36 +247,57 @@ const Courses = () => {
                   fontFamily: "Poppins",
                   fontStyle: "normal",
                   fontWeight: "600",
-                  fontSize: "11px",
+                  fontSize: "14px",
                   textAlign: "center",
                   color: "#7D8594",
                   width: "auto",
                 }}
               >
-                <Box
-                  className="flex flex-row justify-between items-center"
-                  position="relative"
-                >
+                <Box className="flex flex-row justify-between items-center">
                   <CustomCheckbox
                     checked={areAllCoursessSelected}
                     onChange={(e) => handleSelectAllCourses(e.target.checked)}
                   />
                   <Typography>Название курса</Typography>
                 </Box>
-                <Box className="flex flex-row items-center" position="relative">
-                  <Box width="auto" position="relative" right="525px">
-                    <Typography>Дата завершения</Typography>
-                  </Box>
-                  <Typography position="relative" right="465px">
+                <Box
+                  className="flex flex-row items-center justify-between"
+                  flexGrow="3"
+                  maxWidth="70%"
+                >
+                  <Typography
+                    display="flex"
+                    alignItems="flex-start"
+                    width="20%"
+                  >
+                    Дата завершения
+                  </Typography>
+                  <Typography
+                    display="flex"
+                    alignItems="flex-start"
+                    width="18%"
+                  >
                     Группа
                   </Typography>
-                  <Typography position="relative" right="365px">
+                  <Typography
+                    display="flex"
+                    alignItems="flex-start"
+                    width="19%"
+                  >
                     Номер
                   </Typography>
-                  <Typography position="relative" right="245px">
+                  <Typography
+                    display="flex"
+                    alignItems="flex-start"
+                    width="25%"
+                  >
                     Почта
                   </Typography>
-                  <Typography position="relative" right="85px">
+                  <Typography
+                    display="flex"
+                    alignItems="flex-start"
+                    width="20%"
+                  >
                     Учитель
                   </Typography>
                 </Box>

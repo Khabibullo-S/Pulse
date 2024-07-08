@@ -16,8 +16,6 @@ const GroupsList = ({
   endDate,
   course,
   classDays,
-  duration,
-  courseTime,
   roomNumber,
   teacher,
   selectedGroupIds,
@@ -69,7 +67,7 @@ const GroupsList = ({
         marginLeft: "25px",
         marginRight: "45px",
         fontWeight: "500",
-        fontSize: "10px",
+        fontSize: "13px",
         textAlign: "center",
         color: "#7D8594",
         opacity: "0.7",
@@ -88,57 +86,59 @@ const GroupsList = ({
         <Typography>{name}</Typography>
       </Box>
       <Box
-        className="flex flex-row items-center align-center"
-        postition="absolute"
+        className="flex flex-row items-center justify-between"
+        flexGrow="4"
+        maxWidth="75%"
+        paddingLeft="25px"
       >
-        <Typography position="absolute" left="465px">
+        <Typography display="flex" width="14%" alignItems="flex-start">
           {format(new Date(startDate), "dd.MM.yyyy")}
         </Typography>
-        <Typography position="absolute" left="595px">
+        <Typography display="flex" width="18%" alignItems="flex-start">
           {format(new Date(endDate), "dd.MM.yyyy")}
         </Typography>
-        <Typography position="absolute" left="760px">
+        <Typography display="flex" width="12%" alignItems="flex-start">
           {classDays.map(
             (weekDay, i) =>
               `${weekDaysText[weekDay]}${i < classDays.length - 1 ? ", " : ""}`
           )}
         </Typography>
-        <Typography position="absolute" left="875px">
+        <Typography display="flex" width="19%" alignItems="flex-start">
           {teacher.firstName} {teacher.lastName}
         </Typography>
-        <Typography position="absolute" left="1000px">
+        <Typography display="flex" width="23%" alignItems="flex-start">
           {course.duration}{" "}
           {getRussianWord(course.duration, "месяц", "месяца", "месяцев")} /{" "}
           {calculateLessonCount(startDate, endDate, classDays)} уроков
         </Typography>
-        <Typography position="absolute" left="1194px">
+        <Typography display="flex" width="16%" alignItems="flex-start">
           {roomNumber} кабинет
         </Typography>
-        <Typography position="absolute" left="1325px">
+        <Typography display="flex" width="13%" alignItems="flex-start">
           10 {getRussianWord(10, "ученик", "ученика", "учеников")}
         </Typography>
-        <ButtonStyled
-          className="flex justify-center items-center"
-          variant="contained"
-          sx={{
-            width: "20px",
-            height: "20px",
-            backgroundColor: "white",
-            color: "#6574D8",
-            position: "absolute",
-            left: "1395px",
-            border: "1px solid #6574D8",
-            borderRadius: "5px",
-            "&:hover": {
+        <Box display="flex" width="5%">
+          <ButtonStyled
+            className="flex justify-center items-center"
+            variant="contained"
+            sx={{
+              width: "20px",
+              height: "20px",
               backgroundColor: "white",
-            },
-          }}
-          onClick={handleOpenThreeDotsMenu}
-        >
-          <Box className="flex items-center">
-            <Icons.ThreeDotsHor />
-          </Box>
-        </ButtonStyled>
+              color: "#6574D8",
+              border: "1px solid #6574D8",
+              borderRadius: "5px",
+              "&:hover": {
+                backgroundColor: "white",
+              },
+            }}
+            onClick={handleOpenThreeDotsMenu}
+          >
+            <Box className="flex items-center">
+              <Icons.ThreeDotsHor />
+            </Box>
+          </ButtonStyled>
+        </Box>
         <MenuStyled
           id="demo-customized-menu"
           MenuListProps={{

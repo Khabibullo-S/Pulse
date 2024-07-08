@@ -51,7 +51,7 @@ const TeachersList = ({
         marginLeft: "25px",
         marginRight: "45px",
         fontWeight: "500",
-        fontSize: "10px",
+        fontSize: "13px",
         textAlign: "center",
         color: "#7D8594",
         opacity: "0.7",
@@ -72,25 +72,27 @@ const TeachersList = ({
         </Typography>
       </Box>
       <Box
-        className="flex flex-row items-center align-center"
-        postition="absolute"
+        className="flex flex-row items-center"
+        flexGrow="3"
+        maxWidth="75%"
+        paddingLeft="25px"
       >
-        <Typography position="absolute" left="542px">
+        <Typography display="flex" alignItems="flex-start" width="15%">
           Frontend, UX/UI
         </Typography>
-        <Typography position="absolute" left="685px">
+        <Typography display="flex" alignItems="flex-start" width="14%">
           6
         </Typography>
-        <Typography position="absolute" left="835px">
+        <Typography display="flex" alignItems="flex-start" width="17%">
           {formatUzbekPhoneNumber(phoneNumber)}
         </Typography>
-        <Typography position="absolute" left="1000px">
+        <Typography display="flex" alignItems="flex-start" width="14%">
           333
         </Typography>
-        <Typography position="absolute" left="1132px">
+        <Typography display="flex" alignItems="flex-start" width="19%">
           28.02.2024
         </Typography>
-        <Typography position="absolute" left="1300px">
+        <Typography display="flex" alignItems="flex-start" width="15%">
           IT Park Tashkent
         </Typography>
         <ButtonStyled

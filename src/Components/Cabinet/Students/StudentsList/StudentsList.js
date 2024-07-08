@@ -50,18 +50,13 @@ const StudentsList = ({
         marginLeft: "25px",
         marginRight: "45px",
         fontWeight: "500",
-        fontSize: "10px",
+        fontSize: "13px",
         textAlign: "center",
         color: "#7D8594",
         opacity: "0.7",
       }}
     >
-      <Box
-        className="flex flex-row"
-        marginLeft="45px"
-        position="relative"
-        id={id}
-      >
+      <Box className="flex flex-row" marginLeft="45px" id={id}>
         <CustomCheckbox
           checked={selectedStudentIds.includes(id)}
           onChange={() => handleSelectStudent(id)}
@@ -72,45 +67,47 @@ const StudentsList = ({
       </Box>
       <Box
         className="flex flex-row items-center align-center"
-        postition="absolute"
+        maxWidth="69%"
+        flexGrow="4"
+        paddingLeft="6px"
       >
-        <Typography position="absolute" left="598px">
+        <Typography display="flex" alignItems="flex-start" width="17%">
           Frontend, UX/UI
         </Typography>
-        <Typography position="absolute" left="745px">
+        <Typography display="flex" alignItems="flex-start" width="17%">
           UX/UI GRO11-62
         </Typography>
-        <Typography position="absolute" left="885px">
+        <Typography display="flex" alignItems="flex-start" width="21%">
           {formatUzbekPhoneNumber(phoneNumber)}
         </Typography>
-        <Typography position="absolute" left="1090px">
+        <Typography display="flex" alignItems="flex-start" width="25%">
           {email}
         </Typography>
-        <Typography position="absolute" left="1290px">
+        <Typography display="flex" alignItems="flex-start" width="15%">
           Arslan Koptleulov
         </Typography>
-        <ButtonStyled
-          className="flex justify-center items-center"
-          variant="contained"
-          sx={{
-            width: "20px",
-            height: "20px",
-            backgroundColor: "white",
-            color: "#6574D8",
-            position: "absolute",
-            left: "1395px",
-            border: "1px solid #6574D8",
-            borderRadius: "5px",
-            "&:hover": {
+        <Box display="flex" alignItems="flex-start">
+          <ButtonStyled
+            className="flex justify-center items-center"
+            variant="contained"
+            sx={{
+              width: "20px",
+              height: "20px",
               backgroundColor: "white",
-            },
-          }}
-          onClick={handleOpenThreeDotsMenu}
-        >
-          <Box className="flex items-center">
-            <Icons.ThreeDotsHor />
-          </Box>
-        </ButtonStyled>
+              color: "#6574D8",
+              border: "1px solid #6574D8",
+              borderRadius: "5px",
+              "&:hover": {
+                backgroundColor: "white",
+              },
+            }}
+            onClick={handleOpenThreeDotsMenu}
+          >
+            <Box className="flex items-center">
+              <Icons.ThreeDotsHor />
+            </Box>
+          </ButtonStyled>
+        </Box>
         <MenuStyled
           id="demo-customized-menu"
           MenuListProps={{

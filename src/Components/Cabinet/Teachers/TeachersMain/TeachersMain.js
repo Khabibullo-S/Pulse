@@ -391,15 +391,12 @@ const TeachersMain = () => {
                   fontFamily: "Poppins",
                   fontStyle: "normal",
                   fontWeight: "600",
-                  fontSize: "12px",
+                  fontSize: "14px",
                   textAlign: "center",
                   color: "#7D8594",
                 }}
               >
-                <Box
-                  className="flex flex-row justify-between items-center"
-                  position="relative"
-                >
+                <Box className="flex flex-row justify-between items-center">
                   <CustomCheckbox
                     checked={areAllTeachersSelected}
                     onChange={(e) => handleSelectAllTeachers(e.target.checked)}
@@ -408,25 +405,49 @@ const TeachersMain = () => {
                 </Box>
                 <Box
                   className="flex flex-row items-center"
-                  width="100%"
-                  position="relative"
+                  flexGrow="3"
+                  maxWidth="75%"
                 >
-                  <Typography position="absolute" right="810px">
+                  <Typography
+                    display="flex"
+                    alignItems="flex-start"
+                    width="15%"
+                  >
                     Направление
                   </Typography>
-                  <Typography position="absolute" right="645px">
+                  <Typography
+                    display="flex"
+                    alignItems="flex-start"
+                    width="15%"
+                  >
                     Количество групп
                   </Typography>
-                  <Typography position="absolute" right="555px">
+                  <Typography
+                    display="flex"
+                    alignItems="flex-start"
+                    width="17%"
+                  >
                     Номер
                   </Typography>
-                  <Typography position="absolute" right="345px">
+                  <Typography
+                    display="flex"
+                    alignItems="flex-start"
+                    width="15%"
+                  >
                     Учеников всего
                   </Typography>
-                  <Typography position="absolute" right="165px">
+                  <Typography
+                    display="flex"
+                    alignItems="flex-start"
+                    width="20%"
+                  >
                     Дата трудоустройства
                   </Typography>
-                  <Typography position="absolute" right="85px">
+                  <Typography
+                    display="flex"
+                    alignItems="flex-start"
+                    width="15%"
+                  >
                     Филиал
                   </Typography>
                 </Box>
