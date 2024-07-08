@@ -24,6 +24,7 @@ const TeacherCard = ({
   phoneNumber,
   gender,
   secondPhoneNumber,
+  groupsAmount,
 }) => {
   const fullName = `${lastName} ${firstName} ${middleName}`;
   const queryParams = new URLSearchParams({ teacher: fullName }).toString();
@@ -170,7 +171,7 @@ const TeacherCard = ({
                 <TypographyStyled>Количетсво групп</TypographyStyled>
               </InfoWithIcon>
               <Link to={linkPathToGroups} className="link">
-                <TypographyStyled small>6</TypographyStyled>
+                <TypographyStyled small>{groupsAmount}</TypographyStyled>
               </Link>
             </div>
             <div className="flex justify-between">

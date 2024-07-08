@@ -8,7 +8,7 @@ import {
   styled,
 } from "@mui/material";
 import PropTypes from "prop-types";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { NumericFormat } from "react-number-format";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
@@ -35,6 +35,7 @@ import {
 } from "../../CabinetStyles";
 import TeacherCard from "../TeacherCard/TeacherCard";
 import TeachersList from "../TeachersList/TeachersList";
+import { selectAllCourseNames } from "../../../../Slices/coursesSlice";
 
 const headerItemStyles = ({ theme }) => ({
   borderRadius: "10px",
@@ -73,10 +74,25 @@ NumericFormatCustom.propTypes = {
 const TeachersMain = () => {
   const dispatch = useDispatch();
   const teachers = useSelector(selectAllTeachers);
+  const teachersListFromGroups = useSelector((state) =>
+    state.groups.groups.map((group) => group.teacher)
+  );
+  const teachersWithGroupsAmounts = useMemo(
+    () =>
+      teachers.map((teacher) => {
+        const groupsAmount = teachersListFromGroups.filter(
+          (t) => t.id === teacher.id
+        ).length;
+        return { ...teacher, groupsAmount };
+      }),
+    [teachers, teachersListFromGroups]
+  );
   const navigate = useNavigate();
-  const { allCourseNames } = useCourses();
+  const allCourseNames = useSelector(selectAllCourseNames);
 
-  const [filteredTeachers, setFilteredTeacheres] = useState(teachers);
+  const [filteredTeachers, setFilteredTeacheres] = useState(
+    teachersWithGroupsAmounts
+  );
 
   const [teacherSearch, changeTeacherSearch, resetTeacherSearch] = useInput("");
 
@@ -137,7 +153,7 @@ const TeachersMain = () => {
 
   const handleSearchFilter = (searchInput) => {
     const lowerCaseSearchInput = searchInput.toLowerCase().trim().split(" ");
-    const filtered = teachers.filter((teacher) => {
+    const filtered = teachersWithGroupsAmounts.filter((teacher) => {
       const fullName = [
         teacher.firstName.toLowerCase(),
         teacher.middleName.toLowerCase(),
@@ -159,14 +175,17 @@ const TeachersMain = () => {
       if (teacherSearch !== "") {
         handleSearchFilter(teacherSearch);
       } else {
-        setFilteredTeacheres(teachers);
+        setFilteredTeacheres(teachersWithGroupsAmounts);
       }
     },
     1000,
-    [teacherSearch, teachers]
+    [teacherSearch, teachersWithGroupsAmounts]
   );
 
-  useEffect(() => setFilteredTeacheres(teachers), [teachers]);
+  useEffect(
+    () => setFilteredTeacheres(teachersWithGroupsAmounts),
+    [teachersWithGroupsAmounts]
+  );
 
   return (
     <Root
