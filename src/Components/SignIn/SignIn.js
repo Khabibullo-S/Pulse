@@ -5,8 +5,6 @@ import { Link } from "react-router-dom";
 import {
   Visibility,
   VisibilityOff,
-  WbSunnyOutlined,
-  NightlightOutlined,
 } from "@mui/icons-material";
 import * as routes from "../../Constants/routes";
 import api from "../../Core/api";
@@ -21,6 +19,8 @@ const SignIn = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
+  const [message, setMessage] = useState("");
+
   const login = useGlobal((state) => state.login);
 
   const handleSignIn = async () => {
@@ -34,6 +34,7 @@ const SignIn = () => {
       login(response.data);
     } catch (error) {
       console.error("Ошибка входа:", error.response.data);
+      setMessage("Неправильно введён логин или пароль!")
     }
   };
 
@@ -59,6 +60,7 @@ const SignIn = () => {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="Введите почту"
+                required
                 sx={{
                   width: "100%",
                   marginBottom: "15px",
@@ -77,6 +79,7 @@ const SignIn = () => {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="Введите пароль"
+                required
                 sx={{
                   width: "100%",
                   "& .MuiOutlinedInput-root": {
@@ -102,9 +105,10 @@ const SignIn = () => {
               />
             </div>
           </div>
+          {message && message}
           <Button
             variant="contained"
-            onClick={handleSignIn}
+            onClick={() => handleSignIn()}
             sx={{
               backgroundColor: "#6574D8",
               borderRadius: "12px",
@@ -117,7 +121,7 @@ const SignIn = () => {
             Войти
           </Button>
           <Link to={routes.HOME} className={styles["forgot-password"]}>
-            <div>Забыли Пароль?</div>
+            Забыли Пароль?
           </Link>
         </div>
         <div className={styles["SignIn-ImageBox"]}>
