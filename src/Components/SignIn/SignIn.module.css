@@ -22,7 +22,7 @@
   display: flex;
   align-items: center;
   gap: 55px;
-  height: 600px;
+  height: 625px;
 
   padding: 45px;
 
@@ -68,8 +68,17 @@
   width: 100%;
 }
 
-.SignIn-Box button {
+.button-container {
+  display: flex;
+  flex-direction: column;
+  
+  gap: 15px;
   width: 100%;
+}
+
+.button-container p {
+  margin: 0;
+  color: rgb(245, 0, 0);
 }
 
 .SignIn-ImageBox {

@@ -105,23 +105,25 @@ const SignIn = () => {
               />
             </div>
           </div>
-          {message && message}
-          <Button
-            variant="contained"
-            onClick={() => handleSignIn()}
-            sx={{
-              backgroundColor: "#6574D8",
-              borderRadius: "12px",
-              padding: "10px",
-              "&:hover": {
+          <div className={styles["button-container"]}>
+            {message && <p>{message}</p>}
+            <Button
+              variant="contained"
+              onClick={() => handleSignIn()}
+              sx={{
                 backgroundColor: "#6574D8",
-              },
-            }}
-          >
-            Войти
-          </Button>
+                borderRadius: "12px",
+                padding: "10px",
+                "&:hover": {
+                  backgroundColor: "#6574D8",
+                },
+              }}
+            >
+              Войти
+            </Button>
+          </div>
           <Link to={routes.HOME} className={styles["forgot-password"]}>
-            Забыли Пароль?
+            забыли пароль?
           </Link>
         </div>
         <div className={styles["SignIn-ImageBox"]}>

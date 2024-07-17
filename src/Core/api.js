@@ -31,7 +31,6 @@ api.interceptors.response.use(
     if (error.response && error.response.status === 401) {
       const logout = useGlobal.getState().logout;
       logout();
-      window.location.reload();
     }
     return Promise.reject(error);
   }
