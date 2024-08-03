@@ -219,6 +219,7 @@ const NewTeacher = () => {
   const [fileName, changeFileName, resetFileName] = useInput("");
   const [files, setFiles] = useState([]);
   const [editingFileIndex, setEditingFileIndex] = useState(null);
+  const [filesError, setFilesError] = useState(null);
 
   //Описание
   const [description, changeDescription] = useInput("");
@@ -248,14 +249,23 @@ const NewTeacher = () => {
 
   const handleFileUpload = useCallback(
     (acceptedFile) => {
-      // Create a new file object with the file and the current file name
-      const newFile = { name: fileName, file: acceptedFile[0] };
+      const allowedExtensions = ['doc', 'docx', 'png', 'jpeg', 'jpg', 'pdf'];
 
-      // Update the files state with the new file
-      setFiles((prevFiles) => [...prevFiles, newFile]);
+      const fileExtension = acceptedFile[0].name.split('.').pop().toLowerCase();
 
-      // Reset the file name
-      resetFileName();
+      console.log(fileExtension)
+
+      if (!allowedExtensions.includes(fileExtension)) {
+        setFilesError('Вы не можете загружать файл этого формата! Разрешенными форматами являются doc, docx, png, jpeg, jpg, pdf');
+      } else {
+        setFilesError(null);
+
+        const newFile = { name: fileName, file: acceptedFile[0] };
+  
+        setFiles((prevFiles) => [...prevFiles, newFile]);
+  
+        resetFileName();
+      }
     },
     [fileName, resetFileName]
   );
@@ -611,10 +621,14 @@ const NewTeacher = () => {
               </div>
               <div className="flex flex-col gap-md">
                 <div>
-                  <div className="flex gap-xxs">
+                  <div className="flex flex-row gap-xxs">
                     <FormControl required fullWidth variant="outlined">
                       <label>
-                        <FormLabel>Фамилия *</FormLabel>
+                        <FormLabel>
+                          <div className="flex items-center">
+                            Фамилия <TypographyStyled color="red">*</TypographyStyled>
+                          </div>
+                        </FormLabel>
                       </label>
                       <TextFieldStyled
                         variant="outlined"
@@ -631,7 +645,11 @@ const NewTeacher = () => {
                     </FormControl>
                     <FormControl required fullWidth variant="outlined">
                       <label>
-                        <FormLabel>Имя *</FormLabel>
+                        <FormLabel>
+                          <div className="flex items-center">
+                            Имя <TypographyStyled color="red">*</TypographyStyled>
+                          </div>
+                        </FormLabel>
                       </label>
                       <TextFieldStyled
                         variant="outlined"
@@ -668,7 +686,11 @@ const NewTeacher = () => {
                 <Divider />
                 <div className="flex items-center justify-between">
                   <label style={{ maxWidth: "25%" }}>
-                    <FormLabel row>Номер телефона</FormLabel>
+                    <FormLabel row>
+                      <div className="flex items-center">
+                        Номер телефона <TypographyStyled color="red">*</TypographyStyled>
+                      </div>
+                    </FormLabel>
                   </label>
                   <div
                     className="full-width flex gap-xxs"
@@ -710,7 +732,9 @@ const NewTeacher = () => {
                   <FormControl>
                     <div className="flex items-center gap-md">
                       <FormLabel id="gender-radios" row>
-                        Пол
+                        <div className="flex items-center">
+                          Пол <TypographyStyled color="red">*</TypographyStyled>
+                        </div>
                       </FormLabel>
                       <RadioGroup
                         row
@@ -748,7 +772,11 @@ const NewTeacher = () => {
                   <div style={{ maxWidth: "30%" }}>
                     <FormControl fullWidth variant="outlined">
                       <label htmlFor="date-start">
-                        <FormLabel>Дата рождения</FormLabel>
+                        <FormLabel>
+                          <div className="flex items-center">
+                            Дата рождения <TypographyStyled color="red">*</TypographyStyled>
+                          </div>
+                        </FormLabel>
                       </label>
                       <LocalizationProvider
                         dateAdapter={AdapterDateFns}
@@ -808,7 +836,11 @@ const NewTeacher = () => {
                   <div className="flex flex-col gap-sm">
                     <div className="flex items-center">
                       <label className="full-width" style={{ maxWidth: "25%" }}>
-                        <FormLabel row>Адрес проживания</FormLabel>
+                        <FormLabel row>
+                          <div className="flex items-center">
+                            Адрес проживания <TypographyStyled color="red">*</TypographyStyled>
+                          </div>
+                        </FormLabel>
                       </label>
                       <div
                         className="full-width flex gap-xxs"
@@ -1091,25 +1123,10 @@ const NewTeacher = () => {
                   />
                 </div>
               </FormControl>
-              <FormControl fullWidth variant="outlined">
-                <div className="flex items-center justify-between">
-                  <label style={{ maxWidth: "25%" }}>
-                    <FormLabel row>ИНН</FormLabel>
-                  </label>
-                  <TextFieldStyled
-                    fullWidth
-                    value={inn}
-                    onChange={changeInn}
-                    variant="outlined"
-                    // placeholder="Пример: 011/256"
-                    sx={{ maxWidth: "75%" }}
-                  />
-                </div>
-              </FormControl>
               <FormControl required fullWidth variant="outlined">
                 <div className="flex items-center justify-between">
                   <label style={{ maxWidth: "25%" }}>
-                    <FormLabel row>Направления</FormLabel>
+                    <FormLabel row>Образование</FormLabel>
                   </label>
                   <Box width="100%" maxWidth="75%">
                     <Select
@@ -1396,6 +1413,11 @@ const NewTeacher = () => {
                       style={{ display: "none" }}
                       onChange={handleFileEdit}
                     />
+                    {filesError && 
+                      <TypographyStyled color="crimson" sx={{ display: "flex", alignItems: "center", justifyContent: "center"}}>
+                          {filesError}
+                      </TypographyStyled>
+                    }
                     <Box className="flex flex-col" rowGap="8px">
                       {files.map((file, index) => (
                         <>

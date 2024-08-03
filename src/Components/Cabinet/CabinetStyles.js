@@ -35,6 +35,12 @@ export const theme = createTheme({
       dark: "#FF2D55",
       contrastText: "#ffffff",
     },
+    redButton : {
+      main: "#F6CBCB",
+    },
+    greenButton : { 
+      main: "#D2FADC",
+    },
     successGreen: {
       main: "#34C759",
       light: "#ACFFC1",

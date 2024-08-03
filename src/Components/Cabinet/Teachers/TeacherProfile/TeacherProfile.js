@@ -159,6 +159,7 @@ const TeacherProfile = ({ handleDeleteTeacher }) => {
     "Группы",
     "Активность",
     "Зарплата",
+    "Скиллы",
   ];
 
   const handleImageSelection = (acceptedFiles) => {
@@ -363,7 +364,6 @@ const TeacherProfile = ({ handleDeleteTeacher }) => {
                 <Box className="flex justify-between">
                   <Box className="flex flex-col" rowGap="14px" maxWidth="50%">
                     <InfoItem title="ИНПС">{teacher.inps}</InfoItem>
-                    <InfoItem title="ИНН">{teacher.inn}</InfoItem>
                     <InfoItem title="Скиллы">
                       <Box className="flex" columnGap="8px">
                         <SkillChip
@@ -422,6 +422,9 @@ const TeacherProfile = ({ handleDeleteTeacher }) => {
                 boxShadow: "none",
               }}
             >
+             <SocialLinkItem name="Персональный вебсайт" username="Username">
+
+             </SocialLinkItem>
               <Grid container spacing={2}>
                 {socialMediaTypes.map((socialMediaType, index) => (
                   <Grid item xs={12} sm={4}>
@@ -646,40 +649,62 @@ const TeacherProfile = ({ handleDeleteTeacher }) => {
                         )}
                       </Dropzone>
                     </div>
-                    <div className="flex gap-sm items-center">
+                    <div className="flex gap-lg items-center">
                       <div>
                         <Title
                           fontWeight={600}
                         >{`${teacher.lastName} ${teacher.firstName} ${teacher.middleName}`}</Title>
                         <CardText fontSize={"12px"} color={"#AEB2BA"}>
-                          ID: 011/256
-                        </CardText>
-                        <CardText fontSize={"12px"} color={"#AEB2BA"}>
                           Дата добавления: 21.03.2024
                         </CardText>
                       </div>
-                      <div>
+                      <div className="flex items-center gap-sm">
+                        <TypographyStyled sx={{ color: "#AEB2BA", fontSize: "22px"}}>
+                          ID: 011/256
+                        </TypographyStyled>
+
                         <ButtonStyled
                           variant="contained"
-                          color="purpleBlueLight"
+                          color="greenButton"
                           sx={{ borderRadius: "20px", padding: "8px" }}
                         >
                           <InfoLine>
-                            <Icons.Wallet style={{ color: "inherit" }} />
-                            <CardText>
-                              <NumericFormat
-                                value={1212000}
-                                displayType="text" // Set to "input" if you want an input field
-                                thousandSeparator=" "
-                              />{" "}
-                              сўм
-                            </CardText>
-                          </InfoLine>
+                              <Icons.Wallet style={{ color: "#17C142" }} />
+                              <CardText sx={{ color: "#17C142" }}>
+                                <NumericFormat
+                                  value={1200000}
+                                  displayType="text" 
+                                  thousandSeparator=" "
+                                />{" "}
+                                UZS
+                              </CardText>
+                            </InfoLine>
                         </ButtonStyled>
+
                       </div>
                     </div>
                   </div>
-                  <div>
+                  <div className="flex items-center gap-sm">
+                    <Link
+                      to={
+                        routes.CABINET +
+                        routes.TEACHERS +
+                        routes.getEditPath(teacher.id)
+                      }
+                      className="link"
+                    >
+                      <DialogButton
+                        variant="contained"
+                        color="purpleBlue"
+                        // onClick={handleClickOpen}
+                      >
+                        <div className="flex items-center gap-x3s">
+                          <Icons.Messages />
+                          <span>Документы</span>
+                        </div>
+                      </DialogButton>
+                    </Link>
+
                     <Link
                       to={
                         routes.CABINET +

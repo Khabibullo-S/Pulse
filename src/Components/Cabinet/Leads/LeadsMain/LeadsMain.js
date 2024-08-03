@@ -12,7 +12,6 @@ import {
 import React, { useEffect, useState } from "react";
 import { DragDropContext, Draggable } from "react-beautiful-dnd";
 import { useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
 import { Icons } from "../../../../Assets/Icons/icons";
 import {
   leadSources,
@@ -124,7 +123,6 @@ const LeadsMain = ({
   handleUpdateLeadStatus,
 }) => {
   const allCourseNames = useSelector(selectAllCourseNames);
-  const navigate = useNavigate();
 
   const [open, setOpen] = useState(false);
   const [leadDialogKey, increaseLeadDialogKey] = useCounter(0);
@@ -278,10 +276,6 @@ const LeadsMain = ({
   };
   const handleCloseThreeDotsMenu = () => {
     setAnchorThreeDots(null);
-  };
-
-  const goBack = () => {
-    navigate(-1); // This navigates one step back in history
   };
 
   //useDebounce(
@@ -451,14 +445,6 @@ const LeadsMain = ({
       <Main sx={{ maxHeight: "calc(100vh - 42px)" }}>
         <div className="flex items-stretch justify-between">
           <div className="flex items-center gap-md">
-            <ButtonStyled
-              variant="outlined"
-              sx={headerItemStyles}
-              color="grey"
-              onClick={goBack}
-            >
-              <Icons.ArrowL />
-            </ButtonStyled>
             <Title>Лиды</Title>
             <div className="flex items-stretch gap-xxs full-height">
               <HeaderDiv
@@ -622,9 +608,18 @@ const LeadsMain = ({
 
           <div className="flex items-center gap-sm">
             <ButtonStyled
+              variant="outlined"
+              color="purpleBlue"
+              sx={{ width: "225px", gap: "8px" }}
+            >
+              <Icons.Export />
+              <span>Экспорт</span>
+            </ButtonStyled>
+            <ButtonStyled
               variant="contained"
               color="purpleBlue"
               onClick={handleClickOpen}
+              sx={{ width: "225px"}}
             >
               <div className="flex items-center gap-x3s">
                 <Icons.UserAdd />
@@ -659,14 +654,6 @@ const LeadsMain = ({
                 disableRipple
               ></MenuItem>
             </MenuStyled>
-
-            {/* <ButtonStyled
-              variant="outlined"
-              color="purpleBlue"
-              sx={{ minWidth: "0" }}
-            >
-              <Icons.MenuDots />
-            </ButtonStyled> */}
           </div>
         </div>
         {leadListContent}

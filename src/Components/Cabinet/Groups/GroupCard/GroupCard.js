@@ -2,7 +2,7 @@ import { Box, IconButton, MenuItem, Typography } from "@mui/material";
 import { format } from "date-fns";
 import React from "react";
 import { useDispatch } from "react-redux";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { Icons } from "../../../../Assets/Icons/icons";
 import groupImage from "../../../../Assets/Images/Group.png";
 import { weekDaysText } from "../../../../Constants/dateLocales";
@@ -33,7 +33,6 @@ const GroupCard = ({
   const lessonsInOneMonth = 12;
   const lessonLength = 2; // in hours
   // const durationInHours = duration * lessonsInOneMonth * lessonLength;
-  const navigate = useNavigate();
   // const lessonsAmount = courseTime.duration * classDays.length * 4; // months (group duration) * lessons in a week * weeks in a month
 
   const [anchorEl, setAnchorEl] = React.useState(null);

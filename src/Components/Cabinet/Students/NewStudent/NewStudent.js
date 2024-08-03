@@ -19,8 +19,11 @@ import {
   Select,
   TextField,
   Typography,
+  InputAdornment,
+  Popover,
   styled,
 } from "@mui/material";
+import { MuiColorInput } from 'mui-color-input'
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFnsV3";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
@@ -60,6 +63,7 @@ import {
   textFieldStyles,
   theme,
 } from "../../CabinetStyles";
+import { getElementError } from "@testing-library/react";
 
 const headerItemStyles = ({ theme }) => ({
   borderRadius: "10px",
@@ -129,6 +133,23 @@ const RadioStyled = styled(Radio)(({ theme }) => ({
   },
 }));
 
+const timeInputStyles = {
+  "& .MuiInputBase-input.MuiOutlinedInput-input": {
+    textAlign: "center",
+    fontWeight: "500",
+    height: "100%",
+    width: "100%",
+    "::placeholder": { color: "#D1D5DB", opacity: "1" },
+  },
+  "& input::-webkit-outer-spin-button, & input::-webkit-inner-spin-button": {
+    "-webkit-appearance": "none",
+    margin: 0,
+  },
+  "& input[type=number]": {
+    "-moz-appearance": "textfield",
+  },
+}
+
 const NewStudent = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -147,6 +168,16 @@ const NewStudent = () => {
   const [firstNameError, setFirstNameError] = useState(false);
   const [lastNameError, setLastNameError] = useState(false);
   const [middleNameError, setMiddleNameError] = useState(false);
+
+  const [parentFirstName, setParentFirstName] = useState("");
+  const [parentMiddleName, setParentMiddleName] = useState("");
+  const [parentLastName, setParentLastName] = useState("");
+  const [parentFirstNameError, setParentFirstNameError] = useState(false);
+  const [parentLastNameError, setParentLastNameError] = useState(false);
+  const [parentMiddleNameError, setParentMiddleNameError] = useState(false);
+
+  const [studentDescription, setStudentDescription] = useState("");
+  const [errorStudentDescription, setErrorStudentDescription] = useState(false)
 
   const [phoneNumber, setPhoneNumber] = useState("");
   const [additionalPhoneNumber, setAdditionalPhoneNumber] = useState("");
@@ -175,16 +206,87 @@ const NewStudent = () => {
   const [group, changeGroup, resetGroup] = useAutocompleteInput("");
   const [dateOfEnrollment, setDateOfEnrollment] = useState(null);
 
-  const [tags, setTags] = useState(["Тег 1", "Тег 2", "Тег 3"]);
-  const [tagFormOpen, setTagFormOpen] = useState(false);
+  const [hoursNumber, setHoursNumber] = useState("");
+  const [minutesNumber, setMinutesNumber] = useState("");
+
+  const [tags, setTags] = useState([{tag: "Тег", color: "#E5E7EB"}, {tag: "Тег", color: "#E5E7EB"}]);
 
   const [studentStatus, setStudentStatus] = useInput("");
 
   const [fileName, changeFileName, resetFileName] = useInput("");
   const [files, setFiles] = useState([]);
   const [editingFileIndex, setEditingFileIndex] = useState(null);
+  const [filesError, setFilesError] = useState(false);
 
   const [description, changeDescription] = useInput("");
+
+  const [isOpen, setIsOpen] = useState([]);
+
+  const handleDeleteTag = (index) => {
+    const newTags = [...tags];
+    newTags.splice(index, 1);
+    setTags(newTags);
+  }
+
+  const handleAddNewTag = () => {
+    const newTags = [...tags, {tag: "Тег", color: "#E5E7EB"}];
+    setTags(newTags);
+  }
+
+  const handleChangeColorPicker = (newColor, index) => {
+    const newTags = [...tags];
+    newTags[index].color = newColor;
+    setTags(newTags);
+  };
+
+  const handleClickColorPicker = (index) => {
+    const newIsOpen = [...isOpen];
+    newIsOpen[index] = !newIsOpen[index];
+    setIsOpen(newIsOpen);
+  };
+
+  const changeStudentDescription = (event) => {
+    if (event.target.value.length <= 500) {
+      setStudentDescription(event.target.value)
+    } else {
+      setErrorStudentDescription(true);
+    }
+  }
+
+  const handleHoursChange = (setter) => (event) => {
+    let inputValue = parseInt(event.target.value, 10);
+
+    // Ensure the value is between 0 and 23
+    if (isNaN(inputValue) || inputValue < 0) inputValue = 0;
+    if (inputValue > 23) inputValue = 23;
+
+    // Add leading zero for numbers less than 10
+    if (inputValue >= 0 && inputValue < 10) {
+      inputValue = `0${inputValue}`;
+    } else {
+      inputValue = `${inputValue}`;
+    }
+
+    setter(inputValue);
+  };
+
+  const handleMinutesChange = (setter) => (event) => {
+    let inputValue = parseInt(event.target.value, 10);
+
+    // Ensure the value is between 0 and 59
+    if (isNaN(inputValue) || inputValue < 0) inputValue = 0;
+    if (inputValue > 59) inputValue = 59;
+
+    // Add leading zero for numbers less than 10
+    if (inputValue >= 0 && inputValue < 10) {
+      inputValue = `0${inputValue}`;
+    } else {
+      inputValue = `${inputValue}`;
+    }
+
+    setter(inputValue);
+  };
+
 
   const handleImageSelection = (acceptedFiles) => {
     // Assuming acceptedFiles is an array containing file objects
@@ -211,14 +313,23 @@ const NewStudent = () => {
 
   const handleFileUpload = useCallback(
     (acceptedFile) => {
-      // Create a new file object with the file and the current file name
-      const newFile = { name: fileName, file: acceptedFile[0] };
+      const allowedExtensions = ['doc', 'docx', 'png', 'jpeg', 'jpg', 'pdf'];
 
-      // Update the files state with the new file
-      setFiles((prevFiles) => [...prevFiles, newFile]);
+      const fileExtension = acceptedFile[0].name.split('.').pop().toLowerCase();
 
-      // Reset the file name
-      resetFileName();
+      console.log(fileExtension)
+
+      if (!allowedExtensions.includes(fileExtension)) {
+        setFilesError('Вы не можете загружать файл этого формата! Разрешенными форматами являются doc, docx, png, jpeg, jpg, pdf');
+      } else {
+        setFilesError(null);
+
+        const newFile = { name: fileName, file: acceptedFile[0] };
+  
+        setFiles((prevFiles) => [...prevFiles, newFile]);
+  
+        resetFileName();
+      }
     },
     [fileName, resetFileName]
   );
@@ -230,6 +341,7 @@ const NewStudent = () => {
 
   const handleFileEdit = (event) => {
     const file = event.target.files[0];
+
     setFiles((prevFiles) => {
       const newFiles = [...prevFiles];
       newFiles[editingFileIndex].file = file;
@@ -298,17 +410,6 @@ const NewStudent = () => {
     setPassportNumber(input);
   };
 
-  const handleChangeParentName = useCallback(
-    _.debounce((index, value) => {
-      setParentsPhoneNumbers((values) => {
-        const newValues = [...values];
-        newValues[index].name = value;
-        return newValues;
-      });
-    }, 10),
-    [parentsPhoneNumbers]
-  ); // delay of 10ms
-
   const handleChangeEmail = (event) => {
     setEmail(event.target.value);
     setEmailError(false);
@@ -365,16 +466,6 @@ const NewStudent = () => {
     if (visibleCount > 1) {
       setVisibleCount(visibleCount - 1);
     }
-  };
-
-  // Function to handle adding a new tag
-  const handleAddTag = (tag) => {
-    setTags([...tags, tag]);
-  };
-
-  // Function to handle deletion of a tag
-  const handleDeleteTag = (tagToDelete) => {
-    setTags(tags.filter((tag) => tag !== tagToDelete));
   };
 
   // Function to submit the form
@@ -598,7 +689,11 @@ const NewStudent = () => {
                   <div className="flex gap-xxs">
                     <FormControl required fullWidth variant="outlined">
                       <label>
-                        <FormLabel>Фамилия *</FormLabel>
+                        <FormLabel>
+                          <div className="flex items-center">
+                            Фамилия <TypographyStyled color="red">*</TypographyStyled>
+                          </div>
+                        </FormLabel>
                       </label>
                       <TextFieldStyled
                         variant="outlined"
@@ -615,7 +710,11 @@ const NewStudent = () => {
                     </FormControl>
                     <FormControl required fullWidth variant="outlined">
                       <label>
-                        <FormLabel>Имя *</FormLabel>
+                        <FormLabel>
+                          <div className="flex items-center">
+                            Имя <TypographyStyled color="red">*</TypographyStyled>
+                          </div>
+                        </FormLabel>
                       </label>
                       <TextFieldStyled
                         variant="outlined"
@@ -652,7 +751,11 @@ const NewStudent = () => {
                 <Divider />
                 <div className="flex items-center justify-between">
                   <label style={{ maxWidth: "25%" }}>
-                    <FormLabel row>Номер телефона</FormLabel>
+                    <FormLabel row>
+                      <div className="flex">
+                        Номер телефона <TypographyStyled color="red">*</TypographyStyled>
+                      </div>
+                    </FormLabel>
                   </label>
                   <div
                     className="full-width flex gap-xxs"
@@ -694,7 +797,9 @@ const NewStudent = () => {
                   <FormControl>
                     <div className="flex items-center gap-md">
                       <FormLabel id="gender-radios" row>
-                        Пол
+                        <div className="flex">
+                           Пол <TypographyStyled color="red">*</TypographyStyled>
+                        </div>
                       </FormLabel>
                       <RadioGroup
                         row
@@ -738,7 +843,11 @@ const NewStudent = () => {
                   <div style={{ maxWidth: "30%" }}>
                     <FormControl fullWidth variant="outlined">
                       <label htmlFor="date-start">
-                        <FormLabel>Дата рождения</FormLabel>
+                        <FormLabel>
+                          <div className="flex items-center">
+                            Дата рождения <TypographyStyled color="red">*</TypographyStyled>
+                          </div>
+                        </FormLabel>
                       </label>
                       <LocalizationProvider
                         dateAdapter={AdapterDateFns}
@@ -798,83 +907,85 @@ const NewStudent = () => {
                   <div className="flex flex-col gap-sm">
                     <div className="flex items-center">
                       <label className="full-width" style={{ maxWidth: "25%" }}>
-                        <FormLabel row>Адрес проживания</FormLabel>
+                        <FormLabel row>
+                          <div className="flex items-center">
+                            Адрес проживания <TypographyStyled color="red">*</TypographyStyled>
+                          </div>
+                        </FormLabel>
                       </label>
-                      <div
-                        className="full-width flex gap-xxs"
-                        style={{ maxWidth: "75%" }}
-                      >
-                        <FormControl fullWidth variant="outlined">
-                          <AutocompleteStyled
-                            options={REGIONS}
-                            value={region}
-                            onChange={(event, value) => {
-                              changeRegion(event, value);
-                              resetDistrict();
-                            }}
-                            renderInput={(params) => (
-                              <AutocompleteField
-                                {...params}
-                                id="city"
-                                variant="outlined"
-                                placeholder="Регион"
-                              />
-                            )}
-                            popupIcon={
-                              <Icons.ArrowD
-                                color={theme.typography.color.darkBlue}
-                              />
-                            }
-                            clearIcon={
-                              <Icons.Delete
-                                color={theme.typography.color.darkBlue}
-                              />
-                            }
-                          />
-                        </FormControl>
-                        <FormControl fullWidth variant="outlined">
-                          <AutocompleteStyled
-                            options={REGION_WITH_DISTRICTS[region] || [""]}
-                            value={district}
-                            onChange={changeDistrict}
-                            renderInput={(params) => (
-                              <AutocompleteField
-                                {...params}
-                                id="city"
-                                variant="outlined"
-                                placeholder="Район"
-                                helperText={`${
-                                  region ? "" : "Сначала выберите регион"
-                                }`}
-                                // error={!city}
-                              />
-                            )}
-                            disabled={!region}
-                            popupIcon={
-                              <Icons.ArrowD
-                                color={theme.typography.color.darkBlue}
-                              />
-                            }
-                            clearIcon={
-                              <Icons.Delete
-                                color={theme.typography.color.darkBlue}
-                              />
-                            }
-                          />
-                        </FormControl>
-                      </div>
                     </div>
 
-                    {/* <div className="flex gap-xxs" style={{ marginLeft: "25%" }}> */}
-                    <TextFieldStyled
-                      value={location}
-                      onChange={changeLocation}
-                      fullWidth
-                      variant="outlined"
-                      placeholder="Место проживания"
-                      sx={{ marginLeft: "25%", maxWidth: "75%" }}
-                    />
-                    {/* </div> */}
+                    <div className="full-width flex gap-sm" style={{ minWidth: "100%" }}>
+                      <FormControl fullWidth variant="outlined">
+                        <AutocompleteStyled
+                          sx={{ minWidth: "35%" }}
+                          options={REGIONS}
+                          value={region}
+                          onChange={(event, value) => {
+                            changeRegion(event, value);
+                            resetDistrict();
+                          }}
+                          renderInput={(params) => (
+                            <AutocompleteField
+                              {...params}
+                              id="city"
+                              variant="outlined"
+                              placeholder="Регион"
+                            />
+                          )}
+                          popupIcon={
+                            <Icons.ArrowD
+                              color={theme.typography.color.darkBlue}
+                            />
+                          }
+                          clearIcon={
+                            <Icons.Delete
+                              color={theme.typography.color.darkBlue}
+                            />
+                          }
+
+                        />
+                      </FormControl>
+                      <FormControl fullWidth variant="outlined">
+                        <AutocompleteStyled
+                          options={REGION_WITH_DISTRICTS[region] || [""]}
+                          value={district}
+                          onChange={changeDistrict}
+                          renderInput={(params) => (
+                            <AutocompleteField
+                              {...params}
+                              id="city"
+                              variant="outlined"
+                              placeholder="Район"
+                              helperText={`${
+                                region ? "" : "Сначала выберите регион"
+                              }`}
+                              sx={{ minWidth: "35%" }}
+                            />
+                          )}
+                          disabled={!region}
+                          popupIcon={
+                            <Icons.ArrowD
+                              color={theme.typography.color.darkBlue}
+                            />
+                          }
+                          clearIcon={
+                            <Icons.Delete
+                              color={theme.typography.color.darkBlue}
+                            />
+                          }
+                        />
+                      </FormControl>
+
+                      <TextFieldStyled
+                        value={location}
+                        onChange={changeLocation}
+                        fullWidth
+                        variant="outlined"
+                        placeholder="Место проживания"
+                        sx={{ minWidth: "35%" }}
+                      />
+                    </div>
                   </div>
                 </FormControl>
               </div>
@@ -929,7 +1040,8 @@ const NewStudent = () => {
                       <FormControl fullWidth variant="outlined">
                         <MuiTelInput
                           variant="outlined"
-                          defaultCountry="UZ"
+                          helperText="Основной номер"
+                          defaultCountry="UZ" 
                           onlyCountries={["UZ"]}
                           value={parentsPhoneNumbers[0].phoneNumber}
                           onChange={(newPhone) =>
@@ -939,14 +1051,16 @@ const NewStudent = () => {
                         />
                       </FormControl>
                       <FormControl fullWidth variant="outlined">
-                        <TextFieldStyled
+                        <MuiTelInput
                           variant="outlined"
-                          placeholder="Имя"
-                          name="given-name"
-                          value={parentsPhoneNumbers[0].name}
-                          onChange={(event) =>
-                            handleChangeParentName(0, event.target.value)
+                          helperText="Дополнительный номер"
+                          defaultCountry="UZ"
+                          onlyCountries={["UZ"]}
+                          value={parentsPhoneNumbers[0].phoneNumber}
+                          onChange={(newPhone) =>
+                            handleChangeParentPhoneNumber(0, newPhone)
                           }
+                          sx={muiTelInputStyles({ theme })}
                         />
                       </FormControl>
                       <Box className="flex items-center">
@@ -960,61 +1074,154 @@ const NewStudent = () => {
                     </div>
                   </div>
                 )}
+              </div>
 
-                {/* Render the rest of the items */}
-                {parentsPhoneNumbers
-                  .slice(1, visibleCount)
-                  .map((parentPhoneNumber, index) => (
-                    <div
-                      className="full-width flex gap-xxs"
-                      style={{ marginLeft: "25%", maxWidth: "75%" }}
-                    >
-                      <FormControl fullWidth variant="outlined">
-                        <MuiTelInput
+              <div className="flex items-center justify-between">
+                <label style={{ maxWidth: "25%" }}>
+                    <FormLabel row>ФИО Родителей</FormLabel>
+                </label>
+
+                <div className="flex items-center justify-between" style={{ maxWidth: "75%" }}>
+                  <FormControl fullWidth variant="outlined">
+                    <div className="flex items-center justify-between gap-sm">
+                      <TextFieldStyled
                           variant="outlined"
-                          defaultCountry="UZ"
-                          onlyCountries={["UZ"]}
-                          value={parentPhoneNumber.phoneNumber}
-                          onChange={(newPhone) =>
-                            handleChangeParentPhoneNumber(index + 1, newPhone)
+                          placeholder="Фамилия"
+                          value={parentLastName}
+                          helperText={
+                          parentLastNameError ? "Только латинские буквы!" : ""
                           }
-                          sx={muiTelInputStyles({ theme })}
+                          onChange={(event) =>
+                            handleChange(event, setParentLastName, setParentLastNameError)
+                          }
                         />
-                      </FormControl>
-                      <FormControl fullWidth variant="outlined">
+
                         <TextFieldStyled
                           variant="outlined"
                           placeholder="Имя"
-                          name="name"
-                          value={parentPhoneNumber.name}
+                          value={parentFirstName}
+                          helperText={
+                            parentFirstNameError ? "Только латинские буквы!" : ""
+                          }
                           onChange={(event) =>
-                            handleChangeParentName(
-                              index + 1,
-                              event.target.value
-                            )
+                            handleChange(event, setParentFirstName, setParentFirstNameError)
                           }
                         />
-                      </FormControl>
-                      <Box className="flex items-center">
-                        <IconButton
-                          color="crimson"
-                          onClick={handleRemoveFields(index + 1)}
-                        >
-                          <Icons.TrashCan />
-                        </IconButton>
-                      </Box>
-                    </div>
-                  ))}
 
-                <div style={{ marginLeft: "25%", maxWidth: "75%" }}>
-                  <DialogButton
+                        <TextFieldStyled
+                          variant="outlined"
+                          placeholder="Отчество"
+                          value={parentMiddleName}
+                          helperText={
+                            parentMiddleNameError ? "Только латинские буквы!" : ""
+                          }
+                          onChange={(event) =>
+                            handleChange(event, setParentMiddleName, setParentMiddleNameError)
+                          }
+                        />
+                    </div>
+                  </FormControl>
+                </div>
+              </div>
+
+              <div className="flex justify-between">
+                <label style={{ minWidth: "25%" }}>
+                    <FormLabel row>Описание для родителей</FormLabel>
+                </label>
+
+                <div className="full-width flex gap-xxs" style={{ maxWidth: "75%" }}>
+                  <FormControl fullWidth variant="outlined" >
+                    <div className="flex items-start">
+                      <TextFieldStyled
+                        value={studentDescription}
+                        onChange={changeStudentDescription}
+                        fullWidth
+                        multiline
+                        rows={3}
+                        variant="outlined"
+                        placeholder="Описание ученика"
+                        helperText= {errorStudentDescription ?  "Описание не должно привышать 500 символов" : ""}
+                        sx={{
+                          "& .MuiInputBase-multiline": {
+                            padding: "0",
+                          },
+                        }}
+                       />
+                    </div>
+                  </FormControl>
+                </div>
+              </div>
+
+              <div className="flex items-center justify-between">
+                <label style={{ maxWidth: "25%" }}>
+                  <FormLabel row>Добавить тег</FormLabel>
+                </label>
+                <div
+                  className="full-width flex flex-wrap gap-x3s"
+                  style={{ maxWidth: "75%" }}
+                >
+                  {tags.map((tag, i) => (
+                    <FormControl variant="outlined">
+                      <TextField
+                        key={i}
+                        placeholder={tag.tag}
+                        InputProps={{
+                          endAdornment: (
+                            <InputAdornment position="end">
+                              <IconButton color={tag.color} onClick={() => handleClickColorPicker(i)}>
+                                  <Icons.Pen /> 
+                              </IconButton>
+                              {i > 1 && <IconButton color="crimson" onClick={() => handleDeleteTag(i)}>
+                                  <Icons.TrashCan /> 
+                              </IconButton>}
+                            </InputAdornment>
+                          ),
+                          style: { color: tag.color === "#E5E7EB" ? "black" : tag.color },
+                        }}
+                        id="info"
+                        variant="outlined"
+                        sx={{
+                          width: "150px",
+                          fontSize: theme.typography.fontSize.xs,
+                          fontWeight: "400",
+                          color: "black",
+                          "& .MuiInputBase-root": {
+                            borderRadius: "8px",
+                            ".MuiInputBase-input": {
+                              width: "75px",
+                              padding: "4.5px 12px",
+                              "::placeholder": {
+                                color: tag.color,
+                                opacity: "1",
+                              },
+                            },
+                            ".MuiOutlinedInput-notchedOutline, &:hover .MuiOutlinedInput-notchedOutline, &:focus .MuiOutlinedInput-notchedOutline":
+                              {
+                                border: `1px solid ${tag.color} !important`,
+                                boxShadow:
+                                  "0px 1px 2px 0px rgba(31, 41, 55, 0.08) !important",
+                              },
+                          },
+                          "& .MuiFormHelperText-root": {
+                            color: "crimson",
+                            fontSize: ".8rem",
+                            margin: "2px 0 -10px 12px",
+                          },
+                        }}
+                      />
+                     {isOpen[i] && <MuiColorInput format="hex" value={tag.color} onChange={(color) => handleChangeColorPicker(color, i)} 
+                                                  sx={{ zIndex: 2, position: "absolute", top: 35, backgroundColor: "white"}} />}
+                    </FormControl>
+                  ))}
+                  <Chip
+                    label="+"
                     variant="outlined"
                     color="purpleBlue"
-                    onClick={handleAddFields}
-                    disabled={visibleCount >= parentsPhoneNumbers.length}
-                  >
-                    Добавить ещё
-                  </DialogButton>
+                    sx={{
+                      borderRadius: `${theme.custom.spacing.xxs}px`,
+                    }}
+                    onClick= {handleAddNewTag}
+                  />
                 </div>
               </div>
 
@@ -1054,11 +1261,12 @@ const NewStudent = () => {
                   </FormControl>
                 </div>
               </div>
-              <div className="flex items-center justify-between">
+
+              <div className="flex items-center justify-between gap-sm">
                 <label style={{ maxWidth: "25%" }}>
                   <FormLabel row>Дата добавления</FormLabel>
                 </label>
-                <Box width="100%" maxWidth="75%">
+                <Box width="100%" maxWidth="75%" display="flex" gap="10px">
                   <FormControl variant="outlined">
                     <LocalizationProvider
                       dateAdapter={AdapterDateFns}
@@ -1082,89 +1290,49 @@ const NewStudent = () => {
                       />
                     </LocalizationProvider>
                   </FormControl>
-                </Box>
-              </div>
-
-              <div className="flex items-center justify-between">
-                <label style={{ maxWidth: "25%" }}>
-                  <FormLabel row>Добавить тег</FormLabel>
-                </label>
-                <div
-                  className="full-width flex flex-wrap gap-x3s"
-                  style={{ maxWidth: "75%" }}
-                >
-                  {tags.map((tag, i) => (
-                    <Chip
-                      label={tag}
-                      onDelete={() => handleDeleteTag(tag)}
-                      key={i}
-                      variant="outlined"
-                      color="purpleBlue"
+                  
+                  <FormControl variant="outlined">
+                    <Box
                       sx={{
-                        borderRadius: "8px",
+                        aspectRatio: 1,
+                        maxWidth: "50px",
+                        maxHeight: "50px",
                       }}
-                      deleteIcon={
-                        <Icons.Delete color={theme.typography.color.darkBlue} />
-                      }
-                    />
-                  ))}
-                  {tagFormOpen && (
-                    <FormControl variant="outlined">
-                      <TextField
-                        autoFocus
-                        required
-                        onBlur={() => {
-                          setTagFormOpen(!tagFormOpen);
-                        }}
-                        onKeyDown={(e) => {
-                          if (e.key === "Enter") {
-                            e.preventDefault();
-                            setTagFormOpen(false);
-                            handleAddTag(e.target.value);
-                          }
-                        }}
-                        id="info"
+                    >
+                      <TextFieldStyled
+                        type="number"
+                        id="name"
                         variant="outlined"
-                        sx={{
-                          fontSize: theme.typography.fontSize.xs,
-                          fontWeight: "400",
-                          color: "inherit",
-                          "& .MuiInputBase-root": {
-                            borderRadius: "8px",
-                            ".MuiInputBase-input": {
-                              width: "100px",
-                              padding: "4.5px 12px",
-                              "::placeholder": {
-                                color: "#D1D5DB",
-                                opacity: "1",
-                              },
-                            },
-                            ".MuiOutlinedInput-notchedOutline, &:hover .MuiOutlinedInput-notchedOutline, &:focus .MuiOutlinedInput-notchedOutline":
-                              {
-                                border: "1px solid #E5E7EB !important",
-                                boxShadow:
-                                  "0px 1px 2px 0px rgba(31, 41, 55, 0.08) !important",
-                              },
-                          },
-                          "& .MuiFormHelperText-root": {
-                            color: "crimson",
-                            fontSize: ".8rem",
-                            margin: "2px 0 -10px 12px",
-                          },
-                        }}
+                        placeholder="00"
+                        value={hoursNumber}
+                        onChange={handleHoursChange(setHoursNumber)}
+                        sx={timeInputStyles}
+                        autoComplete="off"
                       />
-                    </FormControl>
-                  )}
-                  <Chip
-                    label="+"
-                    variant="outlined"
-                    color="purpleBlue"
-                    sx={{
-                      borderRadius: `${theme.custom.spacing.xxs}px`,
-                    }}
-                    onClick={() => setTagFormOpen(!tagFormOpen)}
-                  />
-                </div>
+                    </Box>
+                  </FormControl>
+                  <Typography color="#D1D5DB">:</Typography>
+                  <FormControl variant="outlined">
+                    <Box
+                      sx={{
+                        aspectRatio: 1,
+                        maxWidth: "50px",
+                        maxHeight: "50px",
+                      }}
+                    >
+                      <TextFieldStyled
+                        type="number"
+                        id="name"
+                        variant="outlined"
+                        placeholder="00"
+                        value={minutesNumber}
+                        onChange={handleMinutesChange(setMinutesNumber)}
+                        sx={timeInputStyles}
+                        autoComplete="off"
+                      />
+                    </Box>
+                  </FormControl>
+                </Box>
               </div>
 
               <FormControl fullWidth variant="outlined">
@@ -1190,6 +1358,29 @@ const NewStudent = () => {
                       )
                     )}
                   </Select>
+                </div>
+              </FormControl>
+
+              <FormControl fullWidth variant="outlined">
+                <div className="flex items-start justify-between">
+                  <label style={{ maxWidth: "25%" }}>
+                    <FormLabel row>Описание</FormLabel>
+                  </label>
+                  <TextFieldStyled
+                    value={description}
+                    onChange={changeDescription}
+                    fullWidth
+                    multiline
+                    rows={3}
+                    variant="outlined"
+                    placeholder="Описание ученика"
+                    sx={{
+                      maxWidth: "75%",
+                      "& .MuiInputBase-multiline": {
+                        padding: "0",
+                      },
+                    }}
+                  />
                 </div>
               </FormControl>
 
@@ -1246,6 +1437,11 @@ const NewStudent = () => {
                       style={{ display: "none" }}
                       onChange={handleFileEdit}
                     />
+                    {filesError && 
+                      <TypographyStyled color="crimson" sx={{ display: "flex", alignItems: "center", justifyContent: "center"}}>
+                          {filesError}
+                      </TypographyStyled>
+                    }
                     <Box className="flex flex-col" rowGap="8px">
                       {files.map((file, index) => (
                         <>
@@ -1324,28 +1520,6 @@ const NewStudent = () => {
                 </div>
               </FormControl>
 
-              <FormControl fullWidth variant="outlined">
-                <div className="flex items-start justify-between">
-                  <label style={{ maxWidth: "25%" }}>
-                    <FormLabel row>Описание</FormLabel>
-                  </label>
-                  <TextFieldStyled
-                    value={description}
-                    onChange={changeDescription}
-                    fullWidth
-                    multiline
-                    rows={3}
-                    variant="outlined"
-                    placeholder="Описание ученика"
-                    sx={{
-                      maxWidth: "75%",
-                      "& .MuiInputBase-multiline": {
-                        padding: "0",
-                      },
-                    }}
-                  />
-                </div>
-              </FormControl>
             </div>
           </PaperStyled>
         </div>

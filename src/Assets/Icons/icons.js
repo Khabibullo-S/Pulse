@@ -92,6 +92,7 @@ import { ReactComponent as PLayMaterial } from "./svgs/playMaterial.svg";
 import { ReactComponent as List } from "./svgs/list.svg";
 import { ReactComponent as ListSelected } from "./svgs/listSelected.svg";
 import { ReactComponent as ThreeDotsHor } from "./svgs/threeDotsHor.svg";
+import { ReactComponent as Export } from "./svgs/export.svg";
 
 export const Icons = {
   Add,
@@ -188,4 +189,5 @@ export const Icons = {
   List,
   ListSelected,
   ThreeDotsHor,
+  Export,
 };

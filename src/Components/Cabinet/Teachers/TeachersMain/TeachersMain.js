@@ -5,13 +5,12 @@ import {
   MenuItem,
   Select,
   Typography,
-  styled,
 } from "@mui/material";
 import PropTypes from "prop-types";
 import React, { useEffect, useMemo, useState } from "react";
 import { NumericFormat } from "react-number-format";
 import { useDispatch, useSelector } from "react-redux";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { Icons } from "../../../../Assets/Icons/icons";
 import * as routes from "../../../../Constants/routes";
 import { useCourses } from "../../../../contexts/Courses.context";
@@ -35,6 +34,7 @@ import {
 } from "../../CabinetStyles";
 import TeacherCard from "../TeacherCard/TeacherCard";
 import TeachersList from "../TeachersList/TeachersList";
+import { InfoWithIcon } from "../../GridItemCardStyles";
 import { selectAllCourseNames } from "../../../../Slices/coursesSlice";
 
 const headerItemStyles = ({ theme }) => ({
@@ -87,7 +87,6 @@ const TeachersMain = () => {
       }),
     [teachers, teachersListFromGroups]
   );
-  const navigate = useNavigate();
   const allCourseNames = useSelector(selectAllCourseNames);
 
   const [filteredTeachers, setFilteredTeacheres] = useState(
@@ -166,10 +165,6 @@ const TeachersMain = () => {
     setFilteredTeacheres(filtered);
   };
 
-  const goBack = () => {
-    navigate(-1); // This navigates one step back in history
-  };
-
   useDebounce(
     () => {
       if (teacherSearch !== "") {
@@ -194,14 +189,6 @@ const TeachersMain = () => {
       <Main sx={{ maxHeight: "calc(100vh - 42px)" }}>
         <div className="flex items-stretch justify-between">
           <div className="flex items-center gap-md">
-            <ButtonStyled
-              variant="outlined"
-              sx={headerItemStyles}
-              color="grey"
-              onClick={goBack}
-            >
-              <Icons.ArrowL />
-            </ButtonStyled>
             <Title>Учителя</Title>
             <div className="flex items-stretch gap-xxs full-height">
               <InputBaseStyledV2
@@ -306,6 +293,10 @@ const TeachersMain = () => {
                     {isGrid ? <Icons.ListIcon /> : <Icons.List />}
                   </div>
                 </ButtonStyled>
+                <InfoWithIcon >
+                  <Icons.Group />
+                  <TypographyStyled color="#6574D8">{filteredTeachers.length}</TypographyStyled> 
+                </InfoWithIcon>
                 <Link to={`${routes.CABINET}${routes.TEACHERS}${routes.NEW}`}>
                   <ButtonStyled variant="contained" color="purpleBlue">
                     <div className="flex items-center gap-x3s">

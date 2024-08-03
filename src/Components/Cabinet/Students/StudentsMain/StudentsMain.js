@@ -13,7 +13,7 @@ import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { ru } from "date-fns/locale";
 import React, { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { Icons } from "../../../../Assets/Icons/icons";
 import { russianLocale } from "../../../../Constants/dateLocales";
 import * as routes from "../../../../Constants/routes";
@@ -40,6 +40,7 @@ import {
 } from "../../CabinetStyles";
 import StudentCard from "../StudentCard/StudentCard";
 import StudentsListItem from "../StudentsList/StudentsList";
+import { InfoWithIcon } from "../../GridItemCardStyles";
 
 import { useDispatch, useSelector } from "react-redux";
 import useDebounce from "../../../../hooks/useDebounce";
@@ -62,7 +63,6 @@ const HeaderDiv = styled("div")(({ theme }) => ({
 }));
 
 const StudentsMain = () => {
-  const navigate = useNavigate();
   const dispatch = useDispatch();
   const students = useSelector(selectAllStudents);
   const { allCourseNames } = useCourses();
@@ -206,10 +206,6 @@ const StudentsMain = () => {
     setAnchorThreeDots(null);
   };
 
-  const goBack = () => {
-    navigate(-1); // This navigates one step back in history
-  };
-
   useDebounce(
     () => {
       if (student !== "") {
@@ -263,14 +259,6 @@ const StudentsMain = () => {
         <Box className="flex flex-col" rowGap="16px">
           <div className="flex items-stretch justify-between">
             <div className="flex items-center gap-md">
-              <ButtonStyled
-                variant="outlined"
-                sx={headerItemStyles}
-                color="grey"
-                onClick={goBack}
-              >
-                <Icons.ArrowL />
-              </ButtonStyled>
               <Title>Ученики</Title>
               <div className="flex items-stretch gap-xxs full-height">
                 <InputBaseStyledV2
@@ -418,6 +406,10 @@ const StudentsMain = () => {
                       {isGrid ? <Icons.ListIcon /> : <Icons.List />}
                     </div>
                   </ButtonStyled>
+                  <InfoWithIcon >
+                    <Icons.Group />
+                    <TypographyStyled color="#6574D8">{filteredStudents.length}</TypographyStyled> 
+                  </InfoWithIcon>
                   <Link to={`${routes.CABINET}${routes.STUDENTS}${routes.NEW}`}>
                     <ButtonStyled variant="contained" color="purpleBlue">
                       <div className="flex items-center gap-x3s">
@@ -509,27 +501,8 @@ const StudentsMain = () => {
             </div>
           </div>
           <Box>
-            <Box
-              className="flex items-center"
-              columnGap="4px"
-              maxWidth="max-content"
-              sx={{ cursor: "pointer" }}
-              onClick={toggleAllfiltersOpen}
-            >
-              <TypographyStyled colorFromTheme="purpleBlue">
-                Показать все фильтры
-              </TypographyStyled>
-              <TypographyStyled colorFromTheme="purpleBlue" display="flex">
-                <Icons.ArrowDBold
-                  style={{
-                    transform: `rotate(${allFiltersOpen ? "180deg" : "0deg"})`,
-                    transition: "all .2s ease-in-out",
-                  }}
-                />
-              </TypographyStyled>
-            </Box>
             <Collapse orientation="vertical" in={allFiltersOpen}>
-              <Box display="flex" columnGap="10px" paddingTop="16px">
+              <Box display="flex" columnGap="10px" paddingBottom="16px">
                 <Select
                   multiple
                   required
@@ -666,6 +639,26 @@ const StudentsMain = () => {
                 </LocalizationProvider>
               </Box>
             </Collapse>
+
+            <Box
+              className="flex items-center"
+              columnGap="4px"
+              maxWidth="max-content"
+              sx={{ cursor: "pointer" }}
+              onClick={toggleAllfiltersOpen}
+            >
+              <TypographyStyled colorFromTheme="purpleBlue">
+                Показать все фильтры
+              </TypographyStyled>
+              <TypographyStyled colorFromTheme="purpleBlue" display="flex">
+                <Icons.ArrowDBold
+                  style={{
+                    transform: `rotate(${allFiltersOpen ? "180deg" : "0deg"})`,
+                    transition: "all .2s ease-in-out",
+                  }}
+                />
+              </TypographyStyled>
+            </Box>
           </Box>
         </Box>
         <div

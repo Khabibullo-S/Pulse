@@ -49,6 +49,7 @@ import {
 } from "../../CabinetStyles";
 import GroupCard from "../GroupCard/GroupCard";
 import GroupsList from "../GroupsList/GroupsList";
+import { InfoWithIcon } from "../../GridItemCardStyles";
 import NewGroupDialog from "../NewGroupDialog/NewGroupDialog";
 
 const headerItemStyles = ({ theme }) => ({
@@ -282,10 +283,6 @@ const GroupsMain = () => {
     }
   };
 
-  const goBack = () => {
-    navigate(-1); // This navigates one step back in history
-  };
-
   const handleClickOpen = () => {
     setOpen(true);
   };
@@ -408,14 +405,6 @@ const GroupsMain = () => {
         <Box className="flex flex-col" rowGap="16px">
           <div className="flex items-stretch justify-between">
             <div className="flex items-center gap-md">
-              <ButtonStyled
-                variant="outlined"
-                sx={headerItemStyles}
-                color="grey"
-                onClick={goBack}
-              >
-                <Icons.ArrowL />
-              </ButtonStyled>
               <Title>Группы</Title>
               <div className="flex items-stretch gap-xxs full-height">
                 <InputBaseStyledV2
@@ -545,6 +534,10 @@ const GroupsMain = () => {
                       {isGrid ? <Icons.ListIcon /> : <Icons.List />}
                     </div>
                   </ButtonStyled>
+                  <InfoWithIcon >
+                    <Icons.Group />
+                    <TypographyStyled color="#6574D8">{filteredGroups.length}</TypographyStyled> 
+                  </InfoWithIcon>
                   <ButtonStyled
                     variant="contained"
                     color="purpleBlue"
@@ -610,27 +603,8 @@ const GroupsMain = () => {
             </div>
           </div>
           <Box>
-            <Box
-              className="flex items-center"
-              columnGap="4px"
-              maxWidth="max-content"
-              sx={{ cursor: "pointer" }}
-              onClick={toggleAllfiltersOpen}
-            >
-              <TypographyStyled colorFromTheme="purpleBlue">
-                Показать все фильтры
-              </TypographyStyled>
-              <TypographyStyled colorFromTheme="purpleBlue" display="flex">
-                <Icons.ArrowDBold
-                  style={{
-                    transform: `rotate(${allFiltersOpen ? "180deg" : "0deg"})`,
-                    transition: "all .2s ease-in-out",
-                  }}
-                />
-              </TypographyStyled>
-            </Box>
             <Collapse orientation="vertical" in={allFiltersOpen}>
-              <Box display="flex" columnGap="10px" paddingTop="16px">
+              <Box display="flex" columnGap="10px" paddingBottom="16px">
                 <Select
                   multiple
                   required
@@ -752,6 +726,27 @@ const GroupsMain = () => {
                 </LocalizationProvider>
               </Box>
             </Collapse>
+
+            <Box
+              className="flex items-center"
+              columnGap="4px"
+              maxWidth="max-content"
+              sx={{ cursor: "pointer" }}
+              onClick={toggleAllfiltersOpen}
+            >
+              <TypographyStyled colorFromTheme="purpleBlue">
+                Показать все фильтры
+              </TypographyStyled>
+              <TypographyStyled colorFromTheme="purpleBlue" display="flex">
+                <Icons.ArrowDBold
+                  style={{
+                    transform: `rotate(${allFiltersOpen ? "180deg" : "0deg"})`,
+                    transition: "all .2s ease-in-out",
+                  }}
+                />
+              </TypographyStyled>
+            </Box>
+            
           </Box>
         </Box>
         <div

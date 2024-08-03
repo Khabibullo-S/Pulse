@@ -84,15 +84,12 @@ export const teacherNames = [
 ];
 
 export const socialMediaTypes = [
-  "GitHub",
   "LinkedIn",
   "Instagram",
   "Telegram",
   "Facebook",
-  "X",
   "YouTube",
   "WhatsApp",
-  "Персональный сайт",
 ];
 
 export const socialMediaWithIcons = {
