@@ -422,9 +422,8 @@ const TeacherProfile = ({ handleDeleteTeacher }) => {
                 boxShadow: "none",
               }}
             >
-             <SocialLinkItem name="Персональный вебсайт" username="Username">
-
-             </SocialLinkItem>
+            <Box sx={{ display: "flex", flexDirection: "column", gap: "15px" }}>
+             <SocialLinkItem name="Персональный вебсайт" username="Username" />
               <Grid container spacing={2}>
                 {socialMediaTypes.map((socialMediaType, index) => (
                   <Grid item xs={12} sm={4}>
@@ -435,6 +434,7 @@ const TeacherProfile = ({ handleDeleteTeacher }) => {
                   </Grid>
                 ))}
               </Grid>
+            </Box>
             </Card>
           </Box>
         </Box>
@@ -671,6 +671,7 @@ const TeacherProfile = ({ handleDeleteTeacher }) => {
                           <InfoLine>
                               <Icons.Wallet style={{ color: "#17C142" }} />
                               <CardText sx={{ color: "#17C142" }}>
+                                  +
                                 <NumericFormat
                                   value={1200000}
                                   displayType="text" 

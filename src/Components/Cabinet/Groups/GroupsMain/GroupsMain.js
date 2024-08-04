@@ -766,7 +766,7 @@ const GroupsMain = () => {
             >
               {filteredGroups.map((group, i) => (
                 <Grid item xs="auto" md="auto" lg={3} key={i}>
-                  <GroupCard {...group} />
+                  <GroupCard {...group} setSelectedCourses={setSelectedCourses} selectedCourses={selectedCourses} />
                 </Grid>
               ))}
             </Grid>

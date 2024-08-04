@@ -664,36 +664,36 @@ export const StudentProfile = () => {
 
       {documents ?
         <div id="student-documents" style={{ backgroundColor: "#F9FAFB", padding: "20px", marginTop: "30px", borderRadius: "15px"}}> 
-          <TypographyStyled sx={{ width:"100%", display: "flex", alignItems: "flex-start", fontWeight: "600", fontSize: "16px" }}>
+          <TypographyStyled sx={{ width:"100%", display: "flex", alignItems: "flex-start", fontWeight: "600", fontSize: "18px" }}>
             Документы
           </TypographyStyled>
 
-          <div className="flex flex-col gap-sm" style={{ width: "100%", marginTop: "20px" }}>
+          <div className="flex flex-col gap-sm" style={{ marginTop: "20px" }}>
             {documents.map((doc, i) => (
               <div className="flex items-center">
-                <div className="flex flex-col">
-                  <TypographyStyled width="100%">
+                <div className="full-width flex flex-col" >
+                  <TypographyStyled width="100%" fontSize="15px" color="#AEB2BA">
                     Название Документа
                   </TypographyStyled>
-                  <div className="full-width flex items-center justify-between">
-                    <div className="flex flex-row items-center">
+                  <div className="flex justify-between">
+                    <div className="full-width flex flex-row items-center gap-sm">
 
-                      <img />
+                      <img src="" />
 
-                      <TypographyStyled>
+                      <TypographyStyled fontSize="14px">
                         {doc.name}
                       </TypographyStyled>
 
                     </div>
 
-                    <div className="flex items-center">
+                    <div className="flex items-center gap-sm">
                       <TypographyStyled>
                         {doc.size}
                       </TypographyStyled>
 
-                      <ButtonStyled>
-                        <IconButton>
-                          <Icons.Pen/>
+                      <ButtonStyled variant="contained" color="purpleBlue" sx={{ width: "30px", height: "30px" }} >
+                        <IconButton sx={{ color: "white" }}>
+                          <Icons.Pen  />
                         </IconButton>
                       </ButtonStyled>
                     </div>
@@ -1135,6 +1135,7 @@ export const StudentProfile = () => {
                           <InfoLine>
                               <Icons.Wallet style={{ color: "#17C142" }} />
                               <CardText sx={{ color: "#17C142" }}>
+                                  + 
                                 <NumericFormat
                                   value={1212000}
                                   displayType="text" 

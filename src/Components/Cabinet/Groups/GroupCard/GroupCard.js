@@ -28,6 +28,8 @@ const GroupCard = ({
   courseTime,
   roomNumber,
   teacher,
+  selectedCourses,
+  setSelectedCourses,
 }) => {
   const dispatch = useDispatch();
   const lessonsInOneMonth = 12;
@@ -48,6 +50,15 @@ const GroupCard = ({
   const handleClose = () => {
     setAnchorEl(null);
   };
+
+  const handleChangeSelectedCourses = (course) => {
+    if (selectedCourses.length === 1 && selectedCourses[0] === course) {
+      setSelectedCourses([])
+    } else {
+      setSelectedCourses([course]);
+    }
+  }
+
   return (
     <CardStyled>
       <Box className="flex flex-col" rowGap="20px">
@@ -68,13 +79,15 @@ const GroupCard = ({
               {name !== "" ? name : "GR000-00"}
             </TypographyStyled>
             <Icons.DividerDot color="#D1D5DB" />
-            <TypographyStyled
-              fontSize="1.125rem"
-              fontWeight={600}
-              color={theme.typography.color.darkBlue}
-            >
-              {course.name !== "" ? course.name : "UI/UX"}
-            </TypographyStyled>
+            <ButtonStyled variant="contained" color="purpleBlueLight" onClick={() => handleChangeSelectedCourses(course.name)} >
+              <TypographyStyled
+                fontSize="1rem"
+                fontWeight={600}
+                sx={{ color: "white" }}
+              >
+                {course.name !== "" ? course.name : "UI/UX"}
+              </TypographyStyled>
+            </ButtonStyled>
           </div>
           <IconButton
             color="purpleBlue"

@@ -20,8 +20,11 @@ import {
   Select,
   TextField,
   Typography,
+  InputAdornment,
+  IconButton,
   styled,
 } from "@mui/material";
+import { MuiColorInput } from 'mui-color-input'
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFnsV3";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
@@ -193,9 +196,6 @@ const NewTeacher = () => {
   //ИНПС
   const [inps, changeInps] = useInput("");
 
-  //ИНН
-  const [inn, changeInn] = useInput("");
-
   //Направления
   const [selectedCourseNames, setSelectedCourseNames] = useState([]);
 
@@ -212,7 +212,7 @@ const NewTeacher = () => {
   const [branches, setBranches] = useState([]);
 
   //Добавить тег
-  const [tags, setTags] = useState(["Тег 1"]);
+  const [tags, setTags] = useState([{tag: "Тег", color: "#E5E7EB"}, {tag: "Тег", color: "#E5E7EB"}]);
   const [tagFormOpen, setTagFormOpen] = useState(false);
 
   //Документы
@@ -222,7 +222,10 @@ const NewTeacher = () => {
   const [filesError, setFilesError] = useState(null);
 
   //Описание
-  const [description, changeDescription] = useInput("");
+  const [description, changeDescription] = useState("");
+
+  // Открытие палитры тэгов
+  const [isOpen, setIsOpen] = useState([]);
 
   const handleImageSelection = useCallback((acceptedFiles) => {
     // Assuming acceptedFiles is an array containing file objects
@@ -249,14 +252,12 @@ const NewTeacher = () => {
 
   const handleFileUpload = useCallback(
     (acceptedFile) => {
-      const allowedExtensions = ['doc', 'docx', 'png', 'jpeg', 'jpg', 'pdf'];
+      const allowedExtensions = ['doc', 'docx', 'pdf', 'excel', 'xls', 'xlsx', 'png', 'jpeg', 'jpg', 'heic'];
 
       const fileExtension = acceptedFile[0].name.split('.').pop().toLowerCase();
 
-      console.log(fileExtension)
-
       if (!allowedExtensions.includes(fileExtension)) {
-        setFilesError('Вы не можете загружать файл этого формата! Разрешенными форматами являются doc, docx, png, jpeg, jpg, pdf');
+        setFilesError('Вы не можете загружать файл этого формата! Разрешенными форматами являются doc, docx, pdf, excel, xls, xlsx, png, jpeg, jpg, heic');
       } else {
         setFilesError(null);
 
@@ -270,6 +271,12 @@ const NewTeacher = () => {
     [fileName, resetFileName]
   );
 
+  const handleChangeTextField = (setter) => (event) => {
+    if (event.target.value.length <= 500) {
+      setter(event.target.value)
+    } 
+  }
+
   const handleFileEditClick = (index) => () => {
     setEditingFileIndex(index);
     handleUploadClick("file-edit-input")();
@@ -277,12 +284,22 @@ const NewTeacher = () => {
 
   const handleFileEdit = (event) => {
     const file = event.target.files[0];
-    setFiles((prevFiles) => {
-      const newFiles = [...prevFiles];
-      newFiles[editingFileIndex].file = file;
-      return newFiles;
-    });
-    setEditingFileIndex(null); // reset the editing index
+
+    const allowedExtensions = ['doc', 'docx', 'pdf', 'excel', 'xls', 'xlsx', 'png', 'jpeg', 'jpg', 'heic'];
+    const fileExtension = file.name.split('.').pop().toLowerCase();
+
+    if (!allowedExtensions.includes(fileExtension)) {
+      setFilesError('Вы не можете загружать файл этого формата! Разрешенными форматами являются doc, docx, pdf, excel, xls, xlsx, png, jpeg, jpg, heic');
+    } else {
+      setFilesError(null);
+
+      setFiles((prevFiles) => {
+        const newFiles = [...prevFiles];
+        newFiles[editingFileIndex].file = file;
+        return newFiles;
+      });
+      setEditingFileIndex(null); // reset the editing index
+    }
   };
 
   const handleFileDelete = useCallback(
@@ -304,6 +321,31 @@ const NewTeacher = () => {
     }
   };
 
+  const handleClickColorPicker = (index) => {
+    const newIsOpen = [...isOpen];
+    newIsOpen[index] = !newIsOpen[index];
+    setIsOpen(newIsOpen);
+  };
+
+  
+  const handleAddNewTag = () => {
+    const newTags = [...tags, {tag: "Тег", color: "#E5E7EB"}];
+    setTags(newTags);
+  }
+
+  const handleDeleteTag = (index) => {
+    const newTags = [...tags];
+    newTags.splice(index, 1);
+    setTags(newTags);
+  }
+  
+  const handleChangeColorPicker = (newColor, index) => {
+    const newTags = [...tags];
+    newTags[index].color = newColor;
+    setTags(newTags);
+  };
+
+
   const handleChangePhoneNumber = (newPhone, phoneNumberSetter) => {
     // Remove all non-digit characters
     const digits = newPhone.replace(/\D/g, "");
@@ -317,18 +359,25 @@ const NewTeacher = () => {
     }
   };
 
+
   // Function to handle change in date
-  const handleDateChange = useCallback(
-    (setter) => (newDate) => {
-      if (newDate instanceof Date && !isNaN(newDate)) {
-        setter(newDate);
+  const handleDateChange = (setter) => (newDate) => {
+    const today = new Date();
+
+    if (newDate instanceof Date && !isNaN(newDate)) {
+      if (setter === setDateOfBirth) {
+        if (newDate > today) {
+          setter(today);
+        } else {
+          setter(newDate);
+        }
       } else {
-        // Handle invalid input date here
-        setter(null);
+        setter(newDate);
       }
-    },
-    []
-  );
+    } else {
+      setter(null);
+    }
+  };
 
   const handleChangePassportSeries = (event) => {
     let input = event.target.value;
@@ -404,16 +453,6 @@ const NewTeacher = () => {
     []
   );
 
-  // Function to handle adding a new tag
-  const handleAddTag = (tag) => {
-    setTags([...tags, tag]);
-  };
-
-  // Function to handle deletion of a tag
-  const handleDeleteTag = (tagToDelete) => {
-    setTags(tags.filter((tag) => tag !== tagToDelete));
-  };
-
   const handleClickAdd = async (e) => {
     e.preventDefault();
 
@@ -439,7 +478,6 @@ const NewTeacher = () => {
       education: null,
       contractNumber: "1223",
       description: description,
-      inn: inn,
       inps: inps,
       pnfl: pinfl,
       tags: tags,
@@ -497,7 +535,6 @@ const NewTeacher = () => {
       setPassportNumber(teacher.passportNumber);
       //no parent contacts, education, contractNumber (for now I guess) for teacher
       changeDescription(createEventWithValue(teacher.description));
-      changeInn(createEventWithValue(teacher.inn));
       changeInps(createEventWithValue(teacher.inps));
       changePinfl(createEventWithValue(teacher.pnfl));
       setTags(teacher.tags);
@@ -549,7 +586,7 @@ const NewTeacher = () => {
               color="purpleBlue"
               onClick={handleClickAdd}
             >
-              <span>{id ? "Изменить" : "Добавить"}</span>
+              <span>{id ? "Сохранить" : "Добавить"}</span>
             </DialogButton>
           </div>
         </div>
@@ -593,7 +630,7 @@ const NewTeacher = () => {
                       fontFamily={"Poppins, Rubik, Roboto, sans-serif"}
                     >
                       Мы рекомендуем изображения не менее 1000x1000, вы можете
-                      загрузить PNG или JPG размером не более 10 МБ
+                      загрузить фото формата PNG, JPG или HEIC размером не более 10 МБ
                     </Typography>
                   </div>
                   <div className="flex gap-xxs">
@@ -701,7 +738,7 @@ const NewTeacher = () => {
                         variant="outlined"
                         defaultCountry="UZ"
                         onlyCountries={["UZ"]}
-                        helperText="Основной номер"
+                        helperText={<span style={{ display: "flex" }}>Основной номер<TypographyStyled color="red">*</TypographyStyled></span>}
                         value={phoneNumber}
                         onChange={(newPhone) =>
                           handleChangePhoneNumber(newPhone, setPhoneNumber)
@@ -1199,54 +1236,43 @@ const NewTeacher = () => {
                   style={{ maxWidth: "75%" }}
                 >
                   {tags.map((tag, i) => (
-                    <Chip
-                      label={tag}
-                      onDelete={() => handleDeleteTag(tag)}
-                      key={i}
-                      variant="outlined"
-                      color="purpleBlue"
-                      sx={{
-                        borderRadius: "8px",
-                      }}
-                      deleteIcon={
-                        <Icons.Delete color={theme.typography.color.darkBlue} />
-                      }
-                    />
-                  ))}
-                  {tagFormOpen && (
                     <FormControl variant="outlined">
                       <TextField
-                        autoFocus
-                        required
-                        onBlur={() => {
-                          setTagFormOpen(!tagFormOpen);
-                        }}
-                        onKeyDown={(e) => {
-                          if (e.key === "Enter") {
-                            e.preventDefault();
-                            setTagFormOpen(false);
-                            handleAddTag(e.target.value);
-                          }
+                        key={i}
+                        placeholder={tag.tag}
+                        InputProps={{
+                          endAdornment: (
+                            <InputAdornment position="end">
+                              <IconButton color={tag.color} onClick={() => handleClickColorPicker(i)}>
+                                  <Icons.Pen /> 
+                              </IconButton>
+                              {i > 1 && <IconButton color="crimson" onClick={() => handleDeleteTag(i)}>
+                                  <Icons.TrashCan /> 
+                              </IconButton>}
+                            </InputAdornment>
+                          ),
+                          style: { color: tag.color === "#E5E7EB" ? "black" : tag.color },
                         }}
                         id="info"
                         variant="outlined"
                         sx={{
+                          width: "150px",
                           fontSize: theme.typography.fontSize.xs,
                           fontWeight: "400",
-                          color: "inherit",
+                          color: "black",
                           "& .MuiInputBase-root": {
                             borderRadius: "8px",
                             ".MuiInputBase-input": {
-                              width: "100px",
+                              width: "75px",
                               padding: "4.5px 12px",
                               "::placeholder": {
-                                color: "#D1D5DB",
+                                color: tag.color,
                                 opacity: "1",
                               },
                             },
                             ".MuiOutlinedInput-notchedOutline, &:hover .MuiOutlinedInput-notchedOutline, &:focus .MuiOutlinedInput-notchedOutline":
                               {
-                                border: "1px solid #E5E7EB !important",
+                                border: `1px solid ${tag.color} !important`,
                                 boxShadow:
                                   "0px 1px 2px 0px rgba(31, 41, 55, 0.08) !important",
                               },
@@ -1258,8 +1284,10 @@ const NewTeacher = () => {
                           },
                         }}
                       />
+                     {isOpen[i] && <MuiColorInput format="hex" value={tag.color} onChange={(color) => handleChangeColorPicker(color, i)} 
+                                                  sx={{ zIndex: 2, position: "absolute", top: 35, backgroundColor: "white"}} />}
                     </FormControl>
-                  )}
+                  ))}
                   <Chip
                     label="+"
                     variant="outlined"
@@ -1267,10 +1295,11 @@ const NewTeacher = () => {
                     sx={{
                       borderRadius: `${theme.custom.spacing.xxs}px`,
                     }}
-                    onClick={() => setTagFormOpen(!tagFormOpen)}
+                    onClick= {handleAddNewTag}
                   />
                 </div>
               </div>
+
               <FormControl fullWidth variant="outlined">
                 <div className="flex items-center justify-between">
                   <label style={{ maxWidth: "25%" }}>
@@ -1502,12 +1531,12 @@ const NewTeacher = () => {
                   </label>
                   <TextFieldStyled
                     value={description}
-                    onChange={changeDescription}
+                    onChange={handleChangeTextField(changeDescription)}
                     fullWidth
                     multiline
                     rows={3}
                     variant="outlined"
-                    placeholder="Описание ученика"
+                    placeholder="Описание учителя"
                     sx={{
                       maxWidth: "75%",
                       "& .MuiInputBase-multiline": {

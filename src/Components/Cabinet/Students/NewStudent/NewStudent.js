@@ -176,8 +176,7 @@ const NewStudent = () => {
   const [parentLastNameError, setParentLastNameError] = useState(false);
   const [parentMiddleNameError, setParentMiddleNameError] = useState(false);
 
-  const [studentDescription, setStudentDescription] = useState("");
-  const [errorStudentDescription, setErrorStudentDescription] = useState(false)
+  const [comments, setComments] = useState("");
 
   const [phoneNumber, setPhoneNumber] = useState("");
   const [additionalPhoneNumber, setAdditionalPhoneNumber] = useState("");
@@ -185,7 +184,6 @@ const NewStudent = () => {
   const [gender, changeGender] = useInput("MALE");
 
   const [dateOfBirth, setDateOfBirth] = useState(null);
-
   const [passportSeries, setPassportSeries] = useState("");
   const [passportNumber, setPassportNumber] = useState("");
 
@@ -218,7 +216,7 @@ const NewStudent = () => {
   const [editingFileIndex, setEditingFileIndex] = useState(null);
   const [filesError, setFilesError] = useState(false);
 
-  const [description, changeDescription] = useInput("");
+  const [description, changeDescription] = useState("");
 
   const [isOpen, setIsOpen] = useState([]);
 
@@ -245,13 +243,13 @@ const NewStudent = () => {
     setIsOpen(newIsOpen);
   };
 
-  const changeStudentDescription = (event) => {
+  
+  const handleChangeTextField = (setter) => (event) => {
     if (event.target.value.length <= 500) {
-      setStudentDescription(event.target.value)
-    } else {
-      setErrorStudentDescription(true);
-    }
+      setter(event.target.value)
+    } 
   }
+
 
   const handleHoursChange = (setter) => (event) => {
     let inputValue = parseInt(event.target.value, 10);
@@ -313,14 +311,12 @@ const NewStudent = () => {
 
   const handleFileUpload = useCallback(
     (acceptedFile) => {
-      const allowedExtensions = ['doc', 'docx', 'png', 'jpeg', 'jpg', 'pdf'];
+      const allowedExtensions = ['doc', 'docx', 'pdf', 'excel', 'xls', 'xlsx', 'png', 'jpeg', 'jpg', 'heic'];
 
       const fileExtension = acceptedFile[0].name.split('.').pop().toLowerCase();
 
-      console.log(fileExtension)
-
       if (!allowedExtensions.includes(fileExtension)) {
-        setFilesError('Вы не можете загружать файл этого формата! Разрешенными форматами являются doc, docx, png, jpeg, jpg, pdf');
+        setFilesError('Вы не можете загружать файл этого формата! Разрешенными форматами являются doc, docx, pdf, excel, xls, xlsx, png, jpeg, jpg, heic');
       } else {
         setFilesError(null);
 
@@ -342,12 +338,21 @@ const NewStudent = () => {
   const handleFileEdit = (event) => {
     const file = event.target.files[0];
 
-    setFiles((prevFiles) => {
-      const newFiles = [...prevFiles];
-      newFiles[editingFileIndex].file = file;
-      return newFiles;
-    });
-    setEditingFileIndex(null); // reset the editing index
+    const allowedExtensions = ['doc', 'docx', 'pdf', 'excel', 'xls', 'xlsx', 'png', 'jpeg', 'jpg', 'heic'];
+    const fileExtension = file.name.split('.').pop().toLowerCase();
+
+    if (!allowedExtensions.includes(fileExtension)) {
+      setFilesError('Вы не можете загружать файл этого формата! Разрешенными форматами являются doc, docx, pdf, excel, xls, xlsx, png, jpeg, jpg, heic');
+    } else {
+      setFilesError(null);
+
+      setFiles((prevFiles) => {
+        const newFiles = [...prevFiles];
+        newFiles[editingFileIndex].file = file;
+        return newFiles;
+      });
+      setEditingFileIndex(null); // reset the editing index
+    }
   };
 
   const handleFileDelete = useCallback(
@@ -384,10 +389,19 @@ const NewStudent = () => {
 
   // Function to handle change in date
   const handleDateChange = (setter) => (newDate) => {
+    const today = new Date();
+
     if (newDate instanceof Date && !isNaN(newDate)) {
-      setter(newDate);
+      if (setter === setDateOfBirth) {
+        if (newDate > today) {
+          setter(today);
+        } else {
+          setter(newDate);
+        }
+      } else {
+        setter(newDate);
+      }
     } else {
-      // Handle invalid input date here
       setter(null);
     }
   };
@@ -615,7 +629,7 @@ const NewStudent = () => {
               color="purpleBlue"
               onClick={handleClickAdd}
             >
-              <span>{id ? "Изменить" : "Добавить"}</span>
+              <span>{id ? "Сохранить" : "Добавить"}</span>
             </DialogButton>
           </div>
         </div>
@@ -656,7 +670,7 @@ const NewStudent = () => {
                       fontFamily={"Poppins, Rubik, Roboto, sans-serif"}
                     >
                       Мы рекомендуем изображения не менее 1000x1000, вы можете
-                      загрузить PNG или JPG размером не более 10 МБ
+                      загрузить фото формата PNG, JPG или HEIC размером не более 10 МБ
                     </Typography>
                   </div>
                   <div className="flex gap-xxs">
@@ -766,7 +780,7 @@ const NewStudent = () => {
                         variant="outlined"
                         defaultCountry="UZ"
                         onlyCountries={["UZ"]}
-                        helperText="Основной номер"
+                        helperText={<span style={{ display: "flex" }}>Основной номер <TypographyStyled color="red">*</TypographyStyled></span>}
                         value={phoneNumber}
                         onChange={(newPhone) =>
                           handleChangePhoneNumber(newPhone, setPhoneNumber)
@@ -1126,21 +1140,20 @@ const NewStudent = () => {
 
               <div className="flex justify-between">
                 <label style={{ minWidth: "25%" }}>
-                    <FormLabel row>Описание для родителей</FormLabel>
+                    <FormLabel row>Комментарии к родителям</FormLabel>
                 </label>
 
                 <div className="full-width flex gap-xxs" style={{ maxWidth: "75%" }}>
                   <FormControl fullWidth variant="outlined" >
                     <div className="flex items-start">
                       <TextFieldStyled
-                        value={studentDescription}
-                        onChange={changeStudentDescription}
+                        value={comments}
+                        onChange={handleChangeTextField(setComments)}
                         fullWidth
                         multiline
                         rows={3}
                         variant="outlined"
-                        placeholder="Описание ученика"
-                        helperText= {errorStudentDescription ?  "Описание не должно привышать 500 символов" : ""}
+                        placeholder="Комментарии к родителям"
                         sx={{
                           "& .MuiInputBase-multiline": {
                             padding: "0",
@@ -1368,7 +1381,7 @@ const NewStudent = () => {
                   </label>
                   <TextFieldStyled
                     value={description}
-                    onChange={changeDescription}
+                    onChange={handleChangeTextField(changeDescription)}
                     fullWidth
                     multiline
                     rows={3}
@@ -1519,7 +1532,6 @@ const NewStudent = () => {
                   </Box>
                 </div>
               </FormControl>
-
             </div>
           </PaperStyled>
         </div>
